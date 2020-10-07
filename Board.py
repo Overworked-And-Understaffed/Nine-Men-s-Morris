@@ -1,4 +1,3 @@
-
 import pygame
 
 WIDTH = 800
