@@ -88,7 +88,13 @@ def check_pos(x, y, spots_Dict):
     else:
         return [0,0]
 
+#def whos_turn():
+
+
 def main():
+
+    turn = 1
+
     run = True
     clock = pygame.time.Clock()
 
@@ -98,12 +104,20 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.MOUSEBUTTONDOWN: #"""DO CHECK HERE WHEN YOU GET THE CHANCE"""
+            
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 s, t = mouse_pos
                 [x, y] = check_pos(s, t, spots)
+
+                if turn % 2 == 0:
+                    COLOR = BLUE
+                else:
+                    COLOR = GREEN
+                
                 if [x,y] != [0,0]:
-                    pygame.draw.circle(WIN, BLUE, (x, y), 275)
+                    pygame.draw.circle(WIN, COLOR, (x, y), 25)
+                    turn = turn + 1
 
     pygame.quit()
 
