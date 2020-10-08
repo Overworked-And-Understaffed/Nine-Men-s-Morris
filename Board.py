@@ -1,3 +1,4 @@
+
 import pygame
 
 WIDTH = 800
@@ -86,6 +87,7 @@ def main():
             y = lens[i]
 
             pygame.draw.circle(WIN, RED, (x,x), 10)
+            pygame.draw.circle(WIN, GREEN, (x,x), 10)
             spots.append([x,x])
 
             pygame.draw.circle(WIN, RED, (y+x,y+x), 10)
@@ -110,18 +112,18 @@ def main():
             spots.append([400, x+y])
 
 
-            pygame.draw.line(WIN, RED, (x,x), (x,y+x), 10)
-            pygame.draw.line(WIN, RED, (y+x,x), (y+x,y+x), 10)
-            pygame.draw.line(WIN, RED, (x,x), (y+x,x), 10)
-            pygame.draw.line(WIN, RED, (x,y+x), (y+x,y+x), 10)
+            pygame.draw.line(WIN, RED, (x,x), (x,y+x), 5)
+            pygame.draw.line(WIN, RED, (y+x,x), (y+x,y+x), 5)
+            pygame.draw.line(WIN, RED, (x,x), (y+x,x), 5)
+            pygame.draw.line(WIN, RED, (x,y+x), (y+x,y+x), 5)
 
             i=i+1
         
         #draws the short lines
-        pygame.draw.line(WIN, RED, (xy[0],400), (xy[2],400), 10) #a4 - c4
-        pygame.draw.line(WIN, RED, (xy[0]+lens[0],400), (xy[2]+lens[2],400), 10) #e4 - g4
-        pygame.draw.line(WIN, RED, (400,xy[0]), (400,xy[2]), 10) #d7 - d5
-        pygame.draw.line(WIN, RED, (400,xy[0]+lens[0]), (400,xy[2]+lens[2]), 10) #d3-d1
+        pygame.draw.line(WIN, RED, (xy[0],400), (xy[2],400), 5) #a4 - c4
+        pygame.draw.line(WIN, RED, (xy[0]+lens[0],400), (xy[2]+lens[2],400), 5) #e4 - g4
+        pygame.draw.line(WIN, RED, (400,xy[0]), (400,xy[2]), 5) #d7 - d5
+        pygame.draw.line(WIN, RED, (400,xy[0]+lens[0]), (400,xy[2]+lens[2]), 5) #d3-d1
 
        
         
@@ -145,40 +147,3 @@ def main():
     pygame.quit()
 
 main()
-
-""" 
-import pygame, sys
-from pygame.locals import *
-
-def main():
-    pygame.init()
-
-    DISPLAY = pygame.display.set_mode((800,800),0,32) #(length, width, x, y)
-    pygame.display.set_caption("Nine Men's Morris")
-
-    WHITE = (255,255,255)
-    BLUE = (200,0,2)
-    BROWN = (0,175,226)
-    GREEN = (45, 234, 65)
-    PURPLE = (100, 34, 165)
-    RED = (255, 0, 0)
-
-    DISPLAY.fill(BROWN)
-
-    pygame.draw.rect(DISPLAY,WHITE,(80,80,600,600)) #(x, y, length, width)
-    pygame.draw.rect(DISPLAY,GREEN,(160,160,400,400)) #(x, y, length, width)
-    pygame.draw.rect(DISPLAY,PURPLE,(260,260,200,200)) #(x, y, length, width)
-    
-    pygame.draw.circle(DISPLAY, RED, (80,80), 10)
-    #pygame.draw.line(DISPLAY, RED, 80, 160, 10)# -> Rect
-    
-    
-    while True:
-        for event in pygame.event.get():
-            if event.type==QUIT:
-                #pygame.quit()
-                sys.exit()
-        pygame.display.update()
-
-main()
- """
