@@ -4,6 +4,8 @@ import pygame
 WIDTH = 800
 HEIGHT = 800
 
+
+#COLOR PALLETE
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 BLUE = (0,0,180)
@@ -27,16 +29,16 @@ for mf in axis:
 
 pygame.display.set_caption("Nine Men's Morris")
 
-
+#Creates Board
 def make_board():
         color = BLACK
-        lens = [600,400,200]
-        xy = [100,200,300]
+        board_coords1 = [600,400,200]
+        board_coords2 = [100,200,300]
         spots = [] #cell cordinates
         i = 0
         while i < 3:
-            x = xy[i]
-            y = lens[i]
+            x = board_coords2[i]
+            y = board_coords1[i]
 
             #setup circle placeholders
             pygame.draw.circle(WIN, color, (x,x), 5)
@@ -73,10 +75,10 @@ def make_board():
             i=i+1
         
         #draws the short lines
-        pygame.draw.line(WIN, color, (xy[0],400), (xy[2],400), 5) #a4 - c4
-        pygame.draw.line(WIN, color, (xy[0]+lens[0],400), (xy[2]+lens[2],400), 5) #e4 - g4
-        pygame.draw.line(WIN, color, (400,xy[0]), (400,xy[2]), 5) #d7 - d5
-        pygame.draw.line(WIN, color, (400,xy[0]+lens[0]), (400,xy[2]+lens[2]), 5) #d3-d1
+        pygame.draw.line(WIN, color, (board_coords2[0],400), (board_coords2[2],400), 5) #a4 - c4
+        pygame.draw.line(WIN, color, (board_coords2[0]+board_coords1[0],400), (board_coords2[2]+board_coords1[2],400), 5) #e4 - g4
+        pygame.draw.line(WIN, color, (400,board_coords2[0]), (400,board_coords2[2]), 5) #d7 - d5
+        pygame.draw.line(WIN, color, (400,board_coords2[0]+board_coords1[0]), (400,board_coords2[2]+board_coords1[2]), 5) #d3-d1
    
         pygame.display.flip()
 
@@ -88,7 +90,7 @@ def make_board():
 
         return spots_Dict
     
-
+#Finding if mouse click is within the acceptable range of a coordinate to actually place piece
 def Piece_Location(x, y, spots_Dict):
     xy_range = 25
     
@@ -119,7 +121,7 @@ def main():
         spots = make_board()
         clock.tick(FPS)
         
-        
+        #exits game on request
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -140,9 +142,12 @@ def main():
                         pass ####
                     
                     else:
+                        #BLACK PLACEMENT
                         if turn % 2 == 0:
                             COLOR = BLACK
                             piece_countA += 1   
+
+                        #WHITE PLACEMENT
                         else:
                             COLOR = WHITE
                             piece_countB += 1
@@ -162,5 +167,6 @@ def main():
 
     pygame.quit()
 
+#CALL THE ONLY FUNCTION
 main()
 
