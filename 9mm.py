@@ -119,6 +119,9 @@ def main():
 
     while run:
         spots = make_board()
+        #Test of make-board()
+        #print("Board has been drawn")
+        #return True
         clock.tick(FPS)
         
         #exits game on request
@@ -133,6 +136,8 @@ def main():
 
                 #do nothing if spot is not available
                 if [x, y] in taken_spots:
+                    #Test of taken_spots
+                    #print("Piece has already been placed!")
                     pass
                 
                 #if spot is available
