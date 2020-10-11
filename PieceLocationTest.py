@@ -19,6 +19,8 @@ def Piece_Location_Test(spots_Dict):
             for i in spots_Dict.values():
                 if (i[0] > x - xy_range and i[0] < x + xy_range and i[1] > y - xy_range and i[1] < y + xy_range):
                     assert Piece_Location(x, y, spots_Dict) == True
+                else:
+                    assert Piece_Location(x, y, spots_Dict) == False
                     
     print("End")
     return 
