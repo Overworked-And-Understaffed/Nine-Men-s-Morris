@@ -33,4 +33,6 @@ def main():
         spots = make_board()
         clock.tick(FPS)
         Piece_Location_Test(spots)
-        
+    pygame.quit()   
+    
+main()
