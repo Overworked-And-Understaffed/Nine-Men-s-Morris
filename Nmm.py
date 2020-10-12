@@ -14,6 +14,7 @@ GREEN = (0,180,0)
 YELLOW = (255,255,0)
 RED = (255,0,0)
 
+#Creates bounds for board size
 FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 WIN.fill(GREY)
