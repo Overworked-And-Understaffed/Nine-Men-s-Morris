@@ -1,8 +1,9 @@
+
 import pygame
-from pygame.locals import *
 
 WIDTH = 800
 HEIGHT = 800
+
 
 #COLOR PALLETE
 BLACK = (0,0,0)
@@ -89,7 +90,7 @@ def make_board():
 
         return spots_Dict #
         #print (spots_Dict)
-
+    
 #Finding if mouse click is within the acceptable range of a coordinate to actually place piece
 def Piece_Location(x, y, spots_Dict):
     xy_range = 25
@@ -112,7 +113,7 @@ def main():
     piece_countA = 0    #
     piece_countB = 0    #TRACK NO. PIECES
     taken_spots = []    #TRACK NON-AVAILABLE SPOTS
-
+    
     Possible_Mills = [[100, 100]] #creating mills going to be hard coz 
 
     run = True
@@ -121,12 +122,12 @@ def main():
     while run:
         spots = make_board()
         clock.tick(FPS)
-
+        
         #exits game on request
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
+            
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_position = pygame.mouse.get_pos()
                 s, t = mouse_position
@@ -136,46 +137,30 @@ def main():
                 if [x, y] in taken_spots:
                     print ("----> Position not Empty <----")
                     continue
-
-                #condition for if spot is available
+                
+                #if spot is available
                 else:
-                    pygame.draw.rect(WIN, GREY, (650,50,120,20)) #erase and replace exiting text of text
-                    
-                    #keep total game pieces to 18, 9 for each player
+                    #keep total piece to 18, 9 for each player
                     if piece_countA == 9 and piece_countB == 9:
-                        pass 
-
+                        pass ####
+                    
                     else:
-                        
                         #BLACK PLACEMENT
                         if turn % 2 == 0:
                             COLOR = BLACK
-                            piece_countA += 1
-                            text = fonzi.render("Turn: Player B", True, (YELLOW))
-                            WIN.blit(text, [650,50])  
-
+                            piece_countA += 1   
 
                         #WHITE PLACEMENT
                         else:
                             COLOR = WHITE
                             piece_countB += 1
-                            text = fonzi.render("Turn: Player A", True, (YELLOW))
-                            WIN.blit(text, [650,50])  
-                            
-
-
+                        
                         #should this build be in seperate conditions above?
                         if [x,y] != [0,0]: 
                             pygame.draw.circle(WIN, BLACK, (x, y), 20)
                             pygame.draw.circle(WIN, COLOR, (x, y), 18)
-                            if COLOR == BLACK:
-                                pygame.draw.circle(WIN, WHITE, (x+5, y-3), 2)
-                            else:
-                                pygame.draw.circle(WIN, BLACK, (x+2, y-3), 2)
                             turn = turn + 1
                             taken_spots.append([x,y])
-                        
-
                 
                 #tESTS
                 #print (x, y, s, t,"Here it is \n<----")
