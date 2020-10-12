@@ -120,6 +120,9 @@ def main():
 
     while run:
         spots = make_board()
+        #Test of make-board()
+        #print("Board has been drawn")
+        #return True
         clock.tick(FPS)
 
         #exits game on request
@@ -138,6 +141,11 @@ def main():
                     continue
 
                 #condition for if spot is available
+                    #Test of taken_spots
+                    #print("Piece has already been placed!")
+                    pass
+                
+                #if spot is available
                 else:
                     pygame.draw.rect(WIN, GREY, (650,50,120,20)) #erase and replace exiting text of text
                     
