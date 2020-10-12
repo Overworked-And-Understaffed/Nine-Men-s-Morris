@@ -1,5 +1,5 @@
 import pygame
-from ninemm.py import *
+from Main.py import *
 
 def CheckTurnTest (turn):
    for i in range(101):
@@ -9,5 +9,4 @@ def CheckTurnTest (turn):
         else:
             # assert Player = Player B
             assert COLOR == WHITE
-    
-print ("All good!")
+        
