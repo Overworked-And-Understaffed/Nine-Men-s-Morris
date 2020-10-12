@@ -1,6 +1,6 @@
 
 import pygame
-from ninemm.py import *
+from Main.py import *
 
 def  Piece_Location(x, y, spots_Dict):
     xy_range = 25
