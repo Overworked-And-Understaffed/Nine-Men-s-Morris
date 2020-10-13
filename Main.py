@@ -167,7 +167,7 @@ def main():
                         else:
                             COLOR = WHITE
                             piece_countB += 1
-                            text = fonzi.render("Turn: Player A", True, (YELLOW))
+                            text = fonzi.render ("Turn: Player A", True, (YELLOW))
                             WIN.blit(text, [650,50])  
                             
                             
