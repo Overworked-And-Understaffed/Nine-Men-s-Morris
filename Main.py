@@ -13,6 +13,7 @@ GREY = (180,180,180)
 YELLOW = (255,255,0)
 #RED = (255,0,0)
 
+#Creates vars for board size/color
 FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 WIN.fill(GREY)
@@ -36,7 +37,7 @@ def make_board():
         color = BLACK
         board_coords1 = [600,400,200]
         board_coords2 = [100,200,300]
-        spots = [] #cell coordinates dictionary
+        spots = [] #cell coordinates list
         i = 0
         
         while i < 3:
@@ -69,7 +70,7 @@ def make_board():
             spots.append([400, x+y])
         
         
-            #draws the short lines
+            #draws the long lines
             pygame.draw.line(WIN, color, (x,x), (x,y+x), 5)
             pygame.draw.line(WIN, color, (y+x,x), (y+x,y+x), 5)
             pygame.draw.line(WIN, color, (x,x), (y+x,x), 5)
@@ -85,18 +86,21 @@ def make_board():
    
         pygame.display.flip()
 
-        spots.sort() ##sorting through dictionary coordinates for spots to place pieces
+        spots.sort() #sorts list of locations before the data goes into a dictionary 
 
+        #makes a dictionary to number each spot location
         spots_Dict = {}
         for a, b in enumerate(spots): 
             spots_Dict[a] = b
 
-        return spots_Dict #
-        #print (spots_Dict)
+        #print(spots_Dict)
+        #Looks like {0: [100, 100], 1: [100, 400], 2: [100, 700], 3:[200,200]...}
+        return spots_Dict
 
 #Finding if mouse click is within the acceptable range of a coordinate to actually place piece
 def Piece_Location(x, y, spots_Dict):
     xy_range = 25
+    # Range set to 25, could be changed, seems good
     
     for i in spots_Dict.values():
         if (i[0] > x - xy_range and i[0] < x + xy_range and i[1] > y - xy_range and i[1] < y + xy_range):
