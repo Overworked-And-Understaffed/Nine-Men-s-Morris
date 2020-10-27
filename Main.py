@@ -1,4 +1,5 @@
 import pygame
+import pygame_menu
 from pygame.locals import *
 
 WIDTH = 800
@@ -111,7 +112,33 @@ def Piece_Location(x, y, spots_Dict):
         return [0,0]
     
 
+def multiplayer():
+    print("you've chosen to play with a friend")
+    pass
+def AI():
+    print("You've chosen to play against the computer")
+    pass
+def rules():
+    print("OooOOoOO we could list the rules here ig. whatcha guys think??")
+    pass
+def idek_mane(values, something):
+    print("welp this is here too")
+    pass
+
+def menu():
+    menu = pygame_menu.Menu(300, 400, "sup", theme=pygame_menu.themes.THEME_BLUE)
+    menu.add_button("Play against friend", multiplayer)
+    menu.add_button("Play against computer", AI)
+    menu.add_button("View game rules", rules)
+    menu.add_selector("select a thing", [("uwu", 1), ("rawr xD", 2)], onchange = idek_mane)
+    menu.add_button("Quitter", pygame_menu.events.EXIT)
+    menu.mainloop(WIN)
+
+
 def main():
+
+    #menu()
+
     turn = 1    #TRACK TURNS
     piece_countA = 0    #
     piece_countB = 0    #TRACK NO. PIECES
