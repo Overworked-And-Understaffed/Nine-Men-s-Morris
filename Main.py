@@ -110,7 +110,17 @@ def Piece_Location(x, y, spots_Dict):
             return [i[0],i[1]]
     else:
         return [0,0]
-    
+
+def cordsToNum(x, y, spots_Dict):
+    for key, value in spots_Dict.items():
+        if (value[0] == x and value[1] == y):
+            return key
+
+def isMill(placed_pieces, spots_dict):
+    print(placed_pieces)
+    mill_list = ((0,1,2), (3,4,5),(6,7,8),(9,10,11),(12,13,14),(15,16,17),(18,19,20),(21,22,23),(0,9,21),(3,10,18),(6,11,15),(1,4,7),(16,19,22),(8,12,17),
+                 (5,13,20),(2,14,23))
+    pause()
 
 def multiplayer():
     print("you've chosen to play with a friend")
@@ -134,7 +144,6 @@ def menu():
     menu.add_button("Quitter", pygame_menu.events.EXIT)
     menu.mainloop(WIN)
 
-
 def main():
 
     #menu()
@@ -143,6 +152,8 @@ def main():
     piece_countA = 0    #
     piece_countB = 0    #TRACK NO. PIECES
     taken_spots = []    #TRACK NON-AVAILABLE SPOTS
+    black_placed = []
+    white_placed = []
 
     #Possible_Mills = [[100, 100]] #creating mills going to be hard coz 
 
@@ -166,6 +177,7 @@ def main():
                 mouse_position = pygame.mouse.get_pos()
                 s, t = mouse_position
                 [x, y] = Piece_Location(s, t, spots)
+                location_num = cordsToNum(x, y, spots)
 
                 #do nothing if spot is not available
                 if [x, y] in taken_spots:
@@ -207,11 +219,17 @@ def main():
                             pygame.draw.circle(WIN, BLACK, (x, y), 20)
                             pygame.draw.circle(WIN, COLOR, (x, y), 18)
                             if COLOR == BLACK:
-                                pygame.draw.circle(WIN, WHITE, (x+5, y-3), 2)
+                                pygame.draw.circle(WIN, BLACK, (x+5, y-3), 2)
+                                black_placed.append(location_num)
                             else:
-                                pygame.draw.circle(WIN, BLACK, (x+2, y-3), 2)
+                                pygame.draw.circle(WIN, WHITE, (x+2, y-3), 2)
+                                white_placed.append(location_num)
+
                             turn = turn + 1
                             taken_spots.append([x,y])
+                            print("black spots:", black_placed)
+                            print("white spots:", white_placed)
+
                 
                 #tESTS
                 #print (x, y, s, t,"Here it is \n<----")
