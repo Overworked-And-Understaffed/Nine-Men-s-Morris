@@ -1,17 +1,17 @@
 import pygame
-import pygame_menu
+#import pygame_menu
 from pygame.locals import *
 
 WIDTH = 800
-HEIGHT = 800
+HEIGHT = 800 
 
 #COLOR PALLETE
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 #BLUE = (0,0,180)
-GREY = (180,180,180)
+GREY = (160,180,180)
 #GREEN = (0,180,0)
-YELLOW = (255,255,0)
+YELLOW = (250,240,0)
 #RED = (255,0,0)
 
 #Creates vars for board size/color
@@ -23,14 +23,14 @@ pygame.display.set_caption("Nine Men's Morris") #Window title
 
 #MF axis font display
 pygame.init() #initialize pygame to use fonts for text 
-fonzi = pygame.font.SysFont(None, 26)
+word_font = pygame.font.SysFont(None, 26)
 
 #coordinates for placing board markers
-axis = {"M1": [20, 95], "M2":[20, 195], "M3":[20, 295], "M4":[20, 395], "M5":[20, 495], "M6":[20, 595], "M7":[20, 695],
-        "F1": [95, 760], "F2":[195, 760], "F3":[295, 760], "F4":[395, 760], "F5":[495, 760], "F6":[595, 760], "F7":[695, 760],}
-for mf in axis:
-    text = fonzi.render(mf, True, (YELLOW))
-    WIN.blit(text, axis[mf])
+axis = {"7": [70, 95], "6":[70, 195], "5":[70, 295], "4":[70, 395], "3":[70, 495], "2":[70, 595], "1":[70, 695],
+        "a": [95, 720], "b":[195, 720], "c":[295, 720], "d":[395, 720], "e":[495, 720], "f":[595, 720], "g":[695, 720],}
+for items in axis:
+    text = word_font.render(items, True, (YELLOW))
+    WIN.blit(text, axis[items])
 
 
 #Function for creating Board
@@ -110,7 +110,7 @@ def Piece_Location(x, y, spots_Dict):
             return [i[0],i[1]]
     else:
         return [0,0]
-
+    
 def cordsToNum(x, y, spots_Dict):
     for key, value in spots_Dict.items():
         if (value[0] == x and value[1] == y):
@@ -120,7 +120,9 @@ def isMill(placed_pieces, spots_dict):
     print(placed_pieces)
     mill_list = ((0,1,2), (3,4,5),(6,7,8),(9,10,11),(12,13,14),(15,16,17),(18,19,20),(21,22,23),(0,9,21),(3,10,18),(6,11,15),(1,4,7),(16,19,22),(8,12,17),
                  (5,13,20),(2,14,23))
-    pause()
+    #pause()
+    pass
+
 
 def multiplayer():
     print("you've chosen to play with a friend")
@@ -142,7 +144,8 @@ def menu():
     menu.add_button("View game rules", rules)
     menu.add_selector("select a thing", [("uwu", 1), ("rawr xD", 2)], onchange = idek_mane)
     menu.add_button("Quitter", pygame_menu.events.EXIT)
-    menu.mainloop(WIN)
+    menu.mainloop()
+
 
 def main():
 

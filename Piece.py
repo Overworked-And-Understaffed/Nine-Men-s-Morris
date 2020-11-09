@@ -1,5 +1,4 @@
 
-
 """Piece creation"""
 
 class Piece:
