@@ -141,11 +141,14 @@ class Game(object):
                                 pygame.draw.circle(screen, COLOR, (x, y), 18)
                                 if COLOR == BLACK:
                                     pygame.draw.circle(screen, BLACK, (x+5, y-3), 2)
-                                    black_placed.append(location_num)
+                                    Board.isMill(black_placed, location_num)
+                                    #black_placed.append(location_num)
                                 else:
                                     pygame.draw.circle(screen, WHITE, (x+2, y-3), 2)
-                                    white_placed.append(location_num)
+                                    Board.isMill(white_placed, location_num)
+                                    #white_placed.append(location_num)
 
+                                #my isMill function automatically updates the black/white_placed lists..? im not sure why .____.
                                 turn = turn + 1
                                 taken_spots.append([x,y])
                                 print("black spots:", black_placed)
@@ -237,11 +240,56 @@ class Board(object):
             if (value[0] == x and value[1] == y):
                 return key
 
-    def isMill(self, placed_pieces, spots_dict):
-        print(placed_pieces)
-        mill_list = ((0,1,2), (3,4,5),(6,7,8),(9,10,11),(12,13,14),(15,16,17),(18,19,20),(21,22,23),(0,9,21),(3,10,18),(6,11,15),(1,4,7),(16,19,22),(8,12,17),
-                    (5,13,20),(2,14,23))
-        #pause()
+    def isMill(placed_pieces, new_piece):
+    #print(placed_pieces)
+        mill_list = [{0,1,2},{3,4,5},{6,7,8},{9,10,11},{12,13,14},{15,16,17},{18,19,20},{21,22,23},{0,9,21},{3,10,18},{6,11,15},{1,4,7},{16,19,22},{8,12,17},{5,13,20},{2,14,23}]
+    
+    #First dicards mills from past turns 
+        for mill in mill_list:
+            if mill.issubset(placed_pieces):
+                mill_list.remove(mill)
+    
+        placed_pieces.append(new_piece)
+
+    #Now considers if the new piece created a mill
+    
+        for mill in mill_list:
+            if mill.issubset(placed_pieces):
+                print("Mill at:", mill)
+                return True
+        print("No mill rn bruh")
+        return False
+
+    def isAdj(current_spot, potential_spot):
+        adjacent_positions = [{1,9},#0
+                            {0,4,2},#1
+                            {1,14},#2
+                            {10,4},#3
+                            {1,3,5,7},#4
+                            {4,3},#5
+                            {11,7},#6
+                            {6,8,4},#7
+                            {7,12},#8
+                            {0,21,10},#9
+                            {3,9,18,11},#10
+                            {10,6,15},#11
+                            {8,17,13},#12
+                            {12,5,20,14},#13
+                            {13,2,23},#14
+                            {11,16},#15
+                            {15,19,17},#16
+                            {16,12},#17
+                            {10,19},#18
+                            {18,16,22,20},#19
+                            {19,13},#20
+                            {9,22},#21
+                            {21,19,23},#22
+                            {22,14},#23
+                            ]
+        if potential_spot.issubset(adjacent_positions[current_spot]):
+            return True
+        else:
+            return False
 
         
     #menu
