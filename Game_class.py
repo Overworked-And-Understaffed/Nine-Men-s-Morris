@@ -12,28 +12,25 @@ pygame.init()
 #Colour Palette
 BLACK = (0,0,0)
 WHITE = (255,255,255)
-GREY = (160,180,180)
-YELLOW = (250,240,0)
+JOSHY_GREY = (160,180,180)
+GRAY = (128,128,128)
+YELLOW = (255,255,0)
+DUSTY_YELLOW = (239,228,176)
 FPS = 60
 
 #Screen info
 WIDTH, HEIGHT = 800, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT)) #Window size
-pygame.display.set_caption("Nine Men's Morris") #Window title
-screen.fill(GREY)
+pygame.display.set_caption("Nine Men's Morris Game") #Window title
+screen.fill(GRAY)
 clock = pygame.time.Clock()
+pygame.draw.rect(screen, DUSTY_YELLOW, (100,100,600,600))
 #pygame.RESIZABLE
 
-
 #wall_writing
-word_font = pygame.font.SysFont(None, 26)
-
-#coordinates for placing board markers
-axis = {"7": [70, 95], "6":[70, 195], "5":[70, 295], "4":[70, 395], "3":[70, 495], "2":[70, 595], "1":[70, 695], "a": [95, 720], "b":[195, 720], "c":[295, 720], "d":[395, 720], "e":[495, 720], "f":[595, 720], "g":[695, 720],}
-for items in axis:
-    text = word_font.render(items, True, (YELLOW))
-    screen.blit(text, axis[items])
-
+word_font = pygame.font.SysFont(None, 50)
+instructions_font = pygame.font.SysFont(None, 30)
+menu_font = pygame.font.SysFont(None, 25)
 
 class Game(object):
     def __init__(self):
@@ -69,9 +66,10 @@ class Game(object):
         menu.mainloop(screen)
 
     def Main(self):
+        #variables
         turn = 1    #TRACK TURNS
-        piece_countA = 0    #
-        piece_countB = 0    #TRACK NO. PIECES
+        black_count = 0    #
+        white_count = 0    #TRACK NO. PIECES
         taken_spots = []    #TRACK NON-AVAILABLE SPOTS
         black_placed = []
         white_placed = []
@@ -88,6 +86,10 @@ class Game(object):
             #print("Board has been drawn")
             #return True
             
+            #instruction menu
+            help_button = menu_font.render("Help", True, (YELLOW))
+            screen.blit(help_button, [730,11])
+            
             #exits game on request
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -98,8 +100,16 @@ class Game(object):
                     mouse_position = pygame.mouse.get_pos()
                     s, t = mouse_position
                     [x, y] = Board.Piece_Location(self, s, t, spots)
-                    location_num = Board.cordsToNum(self, x, y, spots)
-
+                    location_num = Board.cordsToNum(self, x, y, spots) 
+                    
+                    #Help display box
+                    print (mouse_position)
+                    if 700+100 > mouse_position[0] > 700 and 0+50 > mouse_position[1] > 0:
+                        pygame.draw.rect(screen, BLACK, (400,0,150,300))
+                    else:
+                        pygame.draw.rect(screen, WHITE, (800,800,50,100))
+                        pygame.display.update()
+                                          
                     #do nothing if spot is not available
                     if [x, y] in taken_spots:
                         print ("----> Position not Empty <----")
@@ -112,27 +122,29 @@ class Game(object):
                     
                     #if spot is available
                     else:
-                        pygame.draw.rect(screen, GREY, (650,50,120,20)) #erase and replace exiting text of text
+                        pygame.draw.rect(screen, GRAY, (0,0,800,70)) #erase and replace exiting text of text
                         
                         #keep total game pieces to 18, 9 for each player
-                        if piece_countA == 9 and piece_countB == 9:
+                        if black_count == 9 and white_count == 9:
+                            #==================================
+                            #where the action happens
+                            #==================================
                             pass 
 
                         #condtions to determine player turns and player count
                         else:
                             #BLACK PLACEMENT
-                            if turn % 2 == 0:
+                            if turn % 2 == 0:                                
                                 COLOR = BLACK
-                                piece_countA += 1
-                                text = word_font.render("Turn: Player B", True, (YELLOW))
-                                screen.blit(text, [650,50])  
+                                # display_blacksTurn = word_font.render("Player B", True, (YELLOW))
+                                # screen.blit(display_blacksTurn, [650,30])  
+                                
 
                             #WHITE PLACEMENT
                             else:
                                 COLOR = WHITE
-                                piece_countB += 1
-                                text = word_font.render ("Turn: Player A", True, (YELLOW))
-                                screen.blit(text, [650,50])  
+                                # display_whitesTurn = word_font.render ("Player A", True, (YELLOW))
+                                # screen.blit(display_whitesTurn, [650,30])  
                                 
                                 
                             #should this build be in seperate conditions above?
@@ -140,22 +152,40 @@ class Game(object):
                                 pygame.draw.circle(screen, BLACK, (x, y), 20)
                                 pygame.draw.circle(screen, COLOR, (x, y), 18)
                                 if COLOR == BLACK:
+                                    black_count += 1
+                                    black_to_move = instructions_font.render("Player B: Waiting for White Piece...", True, (YELLOW))
+                                    screen.blit(black_to_move, [200,50])   
                                     pygame.draw.circle(screen, BLACK, (x+5, y-3), 2)
                                     black_placed.append(location_num)
                                 else:
+                                    white_count += 1
+                                    white_to_move = instructions_font.render("Player A: Waiting for Black Piece...", True, (YELLOW))
+                                    screen.blit(white_to_move, [200,50])
                                     pygame.draw.circle(screen, WHITE, (x+2, y-3), 2)
                                     white_placed.append(location_num)
 
                                 turn = turn + 1
                                 taken_spots.append([x,y])
-                                print("black spots:", black_placed)
-                                print("white spots:", white_placed)
+                                #print("black spots:", black_placed)
+                                #print("white spots:", white_placed)
+                    
+                    print ("White currently has {} pieces on board at {}!".format(white_count, white_placed))
+                    print ("Black currently has {} pieces on board at {}!\n".format(black_count, black_placed))
+ 
        
 class Board(object):
     def __init__(self):
         super().__init__()
         
     def make_board(self):
+
+        #coordinates for placing board markers
+        axis = {"7": [60, 95], "6":[60, 195], "5":[60, 295], "4":[60, 395], "3":[60, 495], "2":[60, 595], "1":[60, 695], "a": [95, 720], "b":[195, 720], "c":[295, 720], "d":[395, 720], "e":[495, 720], "f":[595, 720], "g":[695, 720],}
+        for items in axis:
+            text = word_font.render(items, True, (YELLOW))
+            screen.blit(text, axis[items])
+
+
         color = BLACK
         board_coords1 = [600,400,200]
         board_coords2 = [100,200,300]
@@ -242,8 +272,7 @@ class Board(object):
         mill_list = ((0,1,2), (3,4,5),(6,7,8),(9,10,11),(12,13,14),(15,16,17),(18,19,20),(21,22,23),(0,9,21),(3,10,18),(6,11,15),(1,4,7),(16,19,22),(8,12,17),
                     (5,13,20),(2,14,23))
         #pause()
-
-        
+     
     #menu
 
 class Piece:
