@@ -16,15 +16,15 @@ JOSHY_GREY = (160,180,180)
 GRAY = (128,128,128)
 YELLOW = (255,255,0)
 DUSTY_YELLOW = (239,228,176)
-FPS = 60
+#FPS = 60
 
 #Screen info
 WIDTH, HEIGHT = 800, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT)) #Window size
 pygame.display.set_caption("Nine Men's Morris Game") #Window title
-screen.fill(GRAY)
+
 clock = pygame.time.Clock()
-pygame.draw.rect(screen, DUSTY_YELLOW, (100,100,600,600))
+
 #pygame.RESIZABLE
 
 #wall_writing
@@ -76,39 +76,37 @@ class Game(object):
 
         #Possible_Mills = [[100, 100]] #creating mills going to be hard coz 
 
+        #mainloop===========================
+        
         run = True
         clock = pygame.time.Clock()
 
         while run:
-            spots = Board.make_board(self)
-            clock.tick(FPS)
+            #spots = Board.make_board(self)
+            clock.tick(60)
+            
             #Test of make-board()
             #print("Board has been drawn")
             #return True
             
-            #instruction menu
-            help_button = menu_font.render("Help", True, (YELLOW))
-            screen.blit(help_button, [730,11])
-            
             #exits game on request
             for event in pygame.event.get():
+                mouse_position = pygame.mouse.get_pos()
                 if event.type == pygame.QUIT:
                     run = False
+                
+                screen.fill(GRAY)
+                pygame.draw.rect(screen, DUSTY_YELLOW, (100, 100, 600, 600))
+                spots = Board.make_board(self) 
+                #Board.make_board(self)     
 
                 #search for user/mouse input
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_position = pygame.mouse.get_pos()
+                    #mouse_position = pygame.mouse.get_pos()
+                    
                     s, t = mouse_position
                     [x, y] = Board.Piece_Location(self, s, t, spots)
                     location_num = Board.cordsToNum(self, x, y, spots) 
-                    
-                    #Help display box
-                    print (mouse_position)
-                    if 700+100 > mouse_position[0] > 700 and 0+50 > mouse_position[1] > 0:
-                        pygame.draw.rect(screen, BLACK, (400,0,150,300))
-                    else:
-                        pygame.draw.rect(screen, WHITE, (800,800,50,100))
-                        pygame.display.update()
                                           
                     #do nothing if spot is not available
                     if [x, y] in taken_spots:
@@ -118,7 +116,6 @@ class Game(object):
                     #condition for if spot is available
                         #Test of taken_spots
                         #print("Piece has already been placed!")
-                        pass
                     
                     #if spot is available
                     else:
@@ -131,22 +128,20 @@ class Game(object):
                             #==================================
                             pass 
 
-                        #condtions to determine player turns and player count
+                        #conditions to determine player turns and player count
                         else:
                             #BLACK PLACEMENT
                             if turn % 2 == 0:                                
                                 COLOR = BLACK
                                 # display_blacksTurn = word_font.render("Player B", True, (YELLOW))
                                 # screen.blit(display_blacksTurn, [650,30])  
-                                
 
                             #WHITE PLACEMENT
                             else:
                                 COLOR = WHITE
                                 # display_whitesTurn = word_font.render ("Player A", True, (YELLOW))
                                 # screen.blit(display_whitesTurn, [650,30])  
-                                
-                                
+                               
                             #should this build be in seperate conditions above?
                             if [x,y] != [0,0]: 
                                 pygame.draw.circle(screen, BLACK, (x, y), 20)
@@ -170,15 +165,36 @@ class Game(object):
                                 #print("white spots:", white_placed)
                     
                     print ("White currently has {} pieces on board at {}!".format(white_count, white_placed))
-                    print ("Black currently has {} pieces on board at {}!\n".format(black_count, black_placed))
- 
-       
+                    print ("Black currently has {} pieces on board at {}!\n".format(black_count, black_placed)) 
+
+                #print (pygame.mouse.get_pos())
+                #Help display box
+                
+                if 725+50 > mouse_position[0] > 725 and 10+50 > mouse_position[1] > 10:
+                    pygame.draw.rect(screen, BLACK, (500,50,290,290))
+                    Help_instructions = menu_font.render("White goes first then Black", True, (YELLOW))
+                    screen.blit(Help_instructions, [505,70])
+                                    
+                elif 725+20 < mouse_position[0] < 725 and 10+50 < mouse_position[1] < 10:
+                    pygame.draw.rect(screen, WHITE, (800,800,50,100))
+                    pygame.display.update()
+                else:
+                    pass
+                    
 class Board(object):
     def __init__(self):
         super().__init__()
         
     def make_board(self):
-
+        #instruction menu
+        pygame.draw.rect(screen, BLACK, (725, 10, 50, 20))
+        help_button = menu_font.render("Help", True, (YELLOW))
+        screen.blit(help_button, [730,11])
+        
+        pygame.draw.rect(screen, BLACK, (665, 10, 50, 20))
+        help_button = menu_font.render("Menu", True, (YELLOW))
+        screen.blit(help_button, [670,11])
+            
         #coordinates for placing board markers
         axis = {"7": [60, 95], "6":[60, 195], "5":[60, 295], "4":[60, 395], "3":[60, 495], "2":[60, 595], "1":[60, 695], "a": [95, 720], "b":[195, 720], "c":[295, 720], "d":[395, 720], "e":[495, 720], "f":[595, 720], "g":[695, 720],}
         for items in axis:
@@ -286,11 +302,12 @@ class Piece:
     def str(self):
         return self.color[0]
 
-    def update_location(self, x,y):
+    def update_location(self, x, y):
         self.location_x = x
         self.location_y = y
 
     def kill(self):
         self.is_alive = False
+
 
 Game()
