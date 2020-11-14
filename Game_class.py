@@ -5,7 +5,7 @@ import pygame
 import os
 import sys
 from pygame.locals import *
-#import pygame._menu
+import pygame_menu
 
 pygame.init()
 
@@ -22,7 +22,8 @@ DUSTY_YELLOW = (239,228,176)
 WIDTH, HEIGHT = 800, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT)) #Window size
 pygame.display.set_caption("Nine Men's Morris Game") #Window title
-
+screen.fill(GRAY)
+pygame.draw.rect(screen, DUSTY_YELLOW, (100, 100, 600, 600))
 clock = pygame.time.Clock()
 
 #pygame.RESIZABLE
@@ -56,15 +57,6 @@ class Game(object):
         print("welp this is here too")
         pass
 
-    def menu(self):
-        menu = pygame_menu.Menu(300, 400, "sup", theme = pygame_menu.themes.THEME_BLUE)
-        menu.add_button("Play against friend", multiplayer)
-        menu.add_button("Play against computer", AI)
-        menu.add_button("View game rules", rules)
-        menu.add_selector("select a thing", [("uwu", 1), ("rawr xD", 2)], onchange = idek_mane)
-        menu.add_button("Quitter", pygame_menu.events.EXIT)
-        menu.mainloop(screen)
-
     def Main(self):
         #variables
         turn = 1    #TRACK TURNS
@@ -95,8 +87,7 @@ class Game(object):
                 if event.type == pygame.QUIT:
                     run = False
                 
-                screen.fill(GRAY)
-                pygame.draw.rect(screen, DUSTY_YELLOW, (100, 100, 600, 600))
+                #screen.fill(GRAY)
                 spots = Board.make_board(self) 
                 #Board.make_board(self)     
 
@@ -151,14 +142,14 @@ class Game(object):
                                     black_to_move = instructions_font.render("Player B: Waiting for White Piece...", True, (YELLOW))
                                     screen.blit(black_to_move, [200,50])   
                                     pygame.draw.circle(screen, BLACK, (x+5, y-3), 2)
-                                    Board.isMill(black_placed, location_num)
+                                    Board.isMill(self, black_placed, location_num)
                                     #black_placed.append(location_num)
                                 else:
                                     white_count += 1
                                     white_to_move = instructions_font.render("Player A: Waiting for Black Piece...", True, (YELLOW))
                                     screen.blit(white_to_move, [200,50])
                                     pygame.draw.circle(screen, WHITE, (x+2, y-3), 2)
-                                    Board.isMill(white_placed, location_num)
+                                    Board.isMill(self, white_placed, location_num)
                                     #white_placed.append(location_num)
 
                                 #my isMill function automatically updates the black/white_placed lists..? im not sure why .____.
@@ -190,13 +181,13 @@ class Board(object):
         
     def make_board(self):
         #instruction menu
-        pygame.draw.rect(screen, BLACK, (725, 10, 50, 20))
+        pygame.draw.rect(screen, BLACK, (725, 500, 50, 20))
         help_button = menu_font.render("Help", True, (YELLOW))
-        screen.blit(help_button, [730,11])
+        screen.blit(help_button, [730,500])
         
-        pygame.draw.rect(screen, BLACK, (665, 10, 50, 20))
+        pygame.draw.rect(screen, BLACK, (725, 400, 50, 20))
         help_button = menu_font.render("Menu", True, (YELLOW))
-        screen.blit(help_button, [670,11])
+        screen.blit(help_button, [730, 400])
             
         #coordinates for placing board markers
         axis = {"7": [60, 95], "6":[60, 195], "5":[60, 295], "4":[60, 395], "3":[60, 495], "2":[60, 595], "1":[60, 695], "a": [95, 720], "b":[195, 720], "c":[295, 720], "d":[395, 720], "e":[495, 720], "f":[595, 720], "g":[695, 720],}
@@ -286,15 +277,7 @@ class Board(object):
             if (value[0] == x and value[1] == y):
                 return key
 
-<<<<<<< HEAD
-    def isMill(self, placed_pieces, spots_dict):
-        print(placed_pieces)
-        mill_list = ((0,1,2), (3,4,5),(6,7,8),(9,10,11),(12,13,14),(15,16,17),(18,19,20),(21,22,23),(0,9,21),(3,10,18),(6,11,15),(1,4,7),(16,19,22),(8,12,17),
-                    (5,13,20),(2,14,23))
-        #pause()
-     
-=======
-    def isMill(placed_pieces, new_piece):
+    def isMill(self, placed_pieces, new_piece):
     #print(placed_pieces)
         mill_list = [{0,1,2},{3,4,5},{6,7,8},{9,10,11},{12,13,14},{15,16,17},{18,19,20},{21,22,23},{0,9,21},{3,10,18},{6,11,15},{1,4,7},{16,19,22},{8,12,17},{5,13,20},{2,14,23}]
     
@@ -314,7 +297,7 @@ class Board(object):
         print("No mill rn bruh")
         return False
 
-    def isAdj(current_spot, potential_spot):
+    def isAdj(self, current_spot, potential_spot):
         adjacent_positions = [{1,9},#0
                             {0,4,2},#1
                             {1,14},#2
@@ -340,13 +323,13 @@ class Board(object):
                             {21,19,23},#22
                             {22,14},#23
                             ]
-        if potential_spot.issubset(adjacent_positions[current_spot]):
+        if potential_spot in adjacent_positions[current_spot]:
             return True
         else:
             return False
+ 
 
         
->>>>>>> 710a2fcb6c872f4276ba95d5b96328dcc465a53d
     #menu
 
 class Piece:
