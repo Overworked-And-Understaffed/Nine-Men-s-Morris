@@ -5,6 +5,8 @@ import pygame
 import os
 import sys
 from pygame.locals import *
+import pygame_menu
+from pygame_menu.widgets.core.widget import Widget
 
 pygame.init()
 
@@ -12,10 +14,10 @@ pygame.init()
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 JOSHY_GREY = (160,180,180)
-GRAY = (160,180,180)
+GRAY = (100,100,100)
 YELLOW = (255,240,0)
-DUSTY_YELLOW = (239,228,176)
-#FPS = 60
+DUSTY_YELLOW = (200,230,180)
+FPS = 60
 
 #Screen info
 WIDTH, HEIGHT = 800, 800
@@ -73,7 +75,9 @@ class Game(object):
         
         run = True
         clock = pygame.time.Clock()
-
+        valid_point = instructions_font.render("Select an edge to start PLAY...", True, (YELLOW))
+        screen.blit(valid_point, [290,40])
+        
         while run:
             #spots = Board.make_board(self)
             clock.tick(60)
@@ -217,20 +221,6 @@ class Game(object):
                         print ("White currently has {} pieces on board at {}!".format(white_count, white_placed))
                         print ("Black currently has {} pieces on board at {}!\n".format(black_count, black_placed)) 
 
-                #print (pygame.mouse.get_pos())
-                #Help display box
-                
-                if 725+50 > mouse_position[0] > 725 and 10+50 > mouse_position[1] > 10:
-                    pygame.draw.rect(screen, BLACK, (500,50,290,290))
-                    Help_instructions = menu_font.render("White goes first then Black", True, (YELLOW))
-                    screen.blit(Help_instructions, [505,70])
-                                    
-                elif 725+20 < mouse_position[0] < 725 and 10+50 < mouse_position[1] < 10:
-                    pygame.draw.rect(screen, WHITE, (800,800,50,100))
-                    pygame.display.update()
-                else:
-                    pass
-                    
 class Board(object):
     def __init__(self):
         super().__init__()
@@ -413,4 +403,23 @@ class Piece:
         self.is_alive = False
 
 
-Game()
+game_menu = pygame_menu.Menu(WIDTH, HEIGHT-200, "Menu", theme = pygame_menu.themes.THEME_SOLARIZED, mouse_enabled=True)
+
+help_menu = pygame_menu.Menu(WIDTH-150, HEIGHT, "Instructions", center_content= True, theme = pygame_menu.themes.THEME_BLUE)
+help_menu.add_label("This is an abstract stategy board game with 2 players.")
+help_menu.add_label("Each player has 9 pieces, taking turns placing.")
+help_menu.add_label("The goal is to get your opponent down to 2 pieces only.")
+help_menu.add_label("To accomplish this...", background_color=(70, 100, 120))
+help_menu.add_label("Get 3 of your pieces on one line to create a 'mill'.")
+help_menu.add_label("Once you create a mill, you can then remove")
+help_menu.add_label("one of your opponent's pieces from the board. ") #There are multiple phases to the game:\n\n\nThe 'Placing Pieces' Phase: This phase allows you and your opponent to, in turns, place all of your pieces on the board.\n\nThe 'Moving Pieces' Phase: Once all of the pieces are placed on the board, both you and your opponent try to move your pieces into mills to remove your opponents pieces. During this phase, you can only move your pieces to any places on the board ajacent to where your piece currently is that also has no other pieces placed there.\nThe 'Flying' Phase: When either you or your opponent is down to three pieces, on their turn, that player can move their pieces anywhere on the board where there is not already another piece.")
+help_menu.add_button("Back", game_menu, pygame_menu.events.CLOSE)
+
+
+#game_menu.add_label("Nine Men's Morris Game")
+
+game_menu.add_button('Play', pygame_menu.Menu, Game())
+game_menu.add_button("Instructions", help_menu, selection_color=(0, 0, 100))
+game_menu.add_button('Exit', pygame_menu.events.EXIT)
+
+game_menu.mainloop(screen)
