@@ -5,7 +5,6 @@ import pygame
 import os
 import sys
 from pygame.locals import *
-import pygame_menu
 
 pygame.init()
 
@@ -13,8 +12,8 @@ pygame.init()
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 JOSHY_GREY = (160,180,180)
-GRAY = (128,128,128)
-YELLOW = (255,255,0)
+GRAY = (160,180,180)
+YELLOW = (255,240,0)
 DUSTY_YELLOW = (239,228,176)
 #FPS = 60
 
