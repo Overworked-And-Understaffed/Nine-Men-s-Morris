@@ -59,6 +59,8 @@ class Game(object):
     def Main(self):
         #variables
         turn = 1    #TRACK TURNS
+        phase = 1
+        selected = 123
         black_count = 0    #
         white_count = 0    #TRACK NO. PIECES
         taken_spots = []    #TRACK NON-AVAILABLE SPOTS
@@ -97,68 +99,123 @@ class Game(object):
                     s, t = mouse_position
                     [x, y] = Board.Piece_Location(self, s, t, spots)
                     location_num = Board.cordsToNum(self, x, y, spots) 
-                                          
-                    #do nothing if spot is not available
-                    if [x, y] in taken_spots:
-                        print ("----> Position not Empty <----")
-                        continue
-
-                    #condition for if spot is available
-                        #Test of taken_spots
-                        #print("Piece has already been placed!")
                     
-                    #if spot is available
+                    if turn % 2 == 0:                                
+                        COLOR = BLACK
                     else:
-                        pygame.draw.rect(screen, GRAY, (0,0,800,70)) #erase and replace exiting text of text
-                        
-                        #keep total game pieces to 18, 9 for each player
-                        if black_count == 9 and white_count == 9:
-                            #==================================
-                            #where the action happens
-                            #==================================
-                            pass 
+                        COLOR = WHITE
 
-                        #conditions to determine player turns and player count
-                        else:
-                            #BLACK PLACEMENT
-                            if turn % 2 == 0:                                
-                                COLOR = BLACK
-                                # display_blacksTurn = word_font.render("Player B", True, (YELLOW))
-                                # screen.blit(display_blacksTurn, [650,30])  
+                    if turn == 19:
+                        phase = 2
+                        print("PHASE 2 - SELECT a piece to move")
 
-                            #WHITE PLACEMENT
-                            else:
-                                COLOR = WHITE
-                                # display_whitesTurn = word_font.render ("Player A", True, (YELLOW))
-                                # screen.blit(display_whitesTurn, [650,30])  
-                               
-                            #should this build be in seperate conditions above?
-                            if [x,y] != [0,0]: 
-                                pygame.draw.circle(screen, BLACK, (x, y), 20)
-                                pygame.draw.circle(screen, COLOR, (x, y), 18)
+                    if phase == 2:
+
+                        if selected != 123:
+
+                            sel = Board.numToCords(self, selected, spots)
+                            pygame.draw.circle(screen, YELLOW, sel, 30)
+                            pygame.draw.circle(screen, COLOR, (x, y), 20)
+
+
+                            move_to = location_num
+
+                            print("selected", selected)
+                            print("MOVE TO", move_to)
+
+                            if ([x,y] not in taken_spots and [x,y] != [0,0]): 
+                                #Board.isAdj(location_num, move_to) and
+                                print("are we even getting to this part")
+
                                 if COLOR == BLACK:
-                                    black_count += 1
-                                    black_to_move = instructions_font.render("Player B: Waiting for White Piece...", True, (YELLOW))
-                                    screen.blit(black_to_move, [200,50])   
-                                    pygame.draw.circle(screen, BLACK, (x+5, y-3), 2)
-                                    Board.isMill(self, black_placed, location_num)
-                                    #black_placed.append(location_num)
-                                else:
-                                    white_count += 1
-                                    white_to_move = instructions_font.render("Player A: Waiting for Black Piece...", True, (YELLOW))
-                                    screen.blit(white_to_move, [200,50])
-                                    pygame.draw.circle(screen, WHITE, (x+2, y-3), 2)
-                                    Board.isMill(self, white_placed, location_num)
-                                    #white_placed.append(location_num)
+                                    pygame.draw.circle(screen, BLACK, (x, y), 20)
+                                    print("Black",location_num)
+                                    black_placed.remove(selected)
+                                    Board.isMill(self, black_placed, move_to)
 
-                                #my isMill function automatically updates the black/white_placed lists..? im not sure why .____.
+                                else:
+                                    pygame.draw.circle(screen, WHITE, (x, y), 20)
+                                    print("White", location_num)
+                                    white_placed.remove(selected)
+                                    Board.isMill(self, white_placed, move_to)
+
                                 turn = turn + 1
                                 taken_spots.append([x,y])
-                                #print("black spots:", black_placed)
-                                #print("white spots:", white_placed)
+                                print("black spots:", black_placed)
+                                print("white spots:", white_placed)
+                                selected = 123
+                            else:
+                                pass
+
+                        else:
+                           if location_num in black_placed or location_num in white_placed:
+                                #pygame.draw.circle(screen, YELLOW, (x, y), 30)
+                                #pygame.draw.circle(screen, COLOR, (x, y), 20)
+                                selected = location_num
+                        
+
+                    if phase == 1:
+                    #do nothing if spot is not available
+                        if [x, y] in taken_spots:
+                            print ("----> Position not Empty <----")
+                            continue
+
+                        #condition for if spot is available
+                            #Test of taken_spots
+                            #print("Piece has already been placed!")
                     
-                    print ("White currently has {} pieces on board at {}!".format(white_count, white_placed))
-                    print ("Black currently has {} pieces on board at {}!\n".format(black_count, black_placed)) 
+                        #if spot is available
+                        else:
+                            pygame.draw.rect(screen, GRAY, (0,0,800,70)) #erase and replace exiting text of text
+                        
+                            #keep total game pieces to 18, 9 for each player
+                            if black_count == 9 and white_count == 9:
+                                #==================================
+                                #where the action happens
+                                #==================================
+                                pass 
+
+                            #conditions to determine player turns and player count
+                            else:
+                                #BLACK PLACEMENT
+                                if turn % 2 == 0:                                
+                                    COLOR = BLACK
+                                    # display_blacksTurn = word_font.render("Player B", True, (YELLOW))
+                                    # screen.blit(display_blacksTurn, [650,30])  
+
+                                #WHITE PLACEMENT
+                                else:
+                                    COLOR = WHITE
+                                    # display_whitesTurn = word_font.render ("Player A", True, (YELLOW))
+                                    # screen.blit(display_whitesTurn, [650,30])  
+                               
+                                #should this build be in seperate conditions above?
+                                if [x,y] != [0,0]: 
+                                    pygame.draw.circle(screen, BLACK, (x, y), 20)
+                                    pygame.draw.circle(screen, COLOR, (x, y), 18)
+                                    if COLOR == BLACK:
+                                        black_count += 1
+                                        black_to_move = instructions_font.render("Player B: Waiting for White Piece...", True, (YELLOW))
+                                        screen.blit(black_to_move, [200,50])   
+                                        pygame.draw.circle(screen, BLACK, (x+5, y-3), 2)
+                                        Board.isMill(self, black_placed, location_num)
+                                        #black_placed.append(location_num)
+                                    else:
+                                        white_count += 1
+                                        white_to_move = instructions_font.render("Player A: Waiting for Black Piece...", True, (YELLOW))
+                                        screen.blit(white_to_move, [200,50])
+                                        pygame.draw.circle(screen, WHITE, (x+2, y-3), 2)
+                                        Board.isMill(self, white_placed, location_num)
+                                        #white_placed.append(location_num)
+
+                                    #my isMill function automatically updates the black/white_placed lists..? im not sure why .____.
+                                    turn = turn + 1
+                                    taken_spots.append([x,y])
+                                    #print("black spots:", black_placed)
+                                    #print("white spots:", white_placed)
+                    
+                        print ("White currently has {} pieces on board at {}!".format(white_count, white_placed))
+                        print ("Black currently has {} pieces on board at {}!\n".format(black_count, black_placed)) 
 
                 #print (pygame.mouse.get_pos())
                 #Help display box
@@ -275,6 +332,12 @@ class Board(object):
         for key, value in spots_Dict.items():
             if (value[0] == x and value[1] == y):
                 return key
+
+    def numToCords(self, num, spots_Dict):
+        
+        for key, value in spots_Dict.items():
+            if (key == num):
+                return value
 
     def isMill(self, placed_pieces, new_piece):
     #print(placed_pieces)
