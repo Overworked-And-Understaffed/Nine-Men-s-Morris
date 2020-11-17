@@ -123,7 +123,7 @@ class Game(object):
                             print("selected", selected)
                             print("MOVE TO", move_to)
 
-                            if ([x,y] not in taken_spots and [x,y] != [0,0]): 
+                            if (move_to not in taken_spots and move_to != [0,0]): 
                                 #Board.isAdj(location_num, move_to) and
                                 print("are we even getting to this part")
 
