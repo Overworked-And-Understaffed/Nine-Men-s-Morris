@@ -122,8 +122,8 @@ class Menu:
             screen.blit(self.closeTxt, (self.closeRect.x, self.closeRect.y))
 
       else:
-        heading = self.largeFont.render("Nine Men's Game", True, YELLOW)
-        headingSize = self.largeFont.size("Nine Men's Game")
+        heading = self.largeFont.render("Nine Men's Morris", True, YELLOW)
+        headingSize = self.largeFont.size("Nine Men's Morris")
         headingPos = (int(WIDTH * 0.5) - int(headingSize[0] / 2),
                            int(HEIGHT * 0.2) - int(headingSize[1] / 2))
         screen.blit(heading, headingPos)
