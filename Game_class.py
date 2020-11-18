@@ -14,6 +14,7 @@ pygame.init()
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 JOSHY_GREY = (160,180,180)
+IZZY_RED = (255,0,50)
 GRAY = (100,100,100)
 YELLOW = (255,240,0)
 DUSTY_YELLOW = (200,230,180)
@@ -68,8 +69,7 @@ class Game(object):
         taken_spots = []    #TRACK NON-AVAILABLE SPOTS
         black_placed = []
         white_placed = []
-
-        #Possible_Mills = [[100, 100]] #creating mills going to be hard coz 
+        mill = False
 
         #mainloop===========================
         
@@ -79,41 +79,52 @@ class Game(object):
         screen.blit(valid_point, [290,40])
         
         while run:
-            #spots = Board.make_board(self)
             clock.tick(60)
-            
-            #Test of make-board()
-            #print("Board has been drawn")
-            #return True
+            screen.fill(GRAY)
             
             #exits game on request
             for event in pygame.event.get():
                 mouse_position = pygame.mouse.get_pos()
                 if event.type == pygame.QUIT:
                     run = False
-                
-                #screen.fill(GRAY)
-                spots = Board.make_board(self) 
-                #Board.make_board(self)     
+
+                spots = Board.make_board(self)
+                Board.redraw_pieces(self, black_placed, white_placed, spots)
 
                 #search for user/mouse input
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    #mouse_position = pygame.mouse.get_pos()
+
+                    if turn == 19:
+                        phase = 2
+                        print("PHASE 2 - SELECT a piece to move")
                     
                     s, t = mouse_position
                     [x, y] = Board.Piece_Location(self, s, t, spots)
                     location_num = Board.cordsToNum(self, x, y, spots) 
                     
-                    if turn % 2 == 0:                                
-                        COLOR = BLACK
-                    else:
-                        COLOR = WHITE
+                    if mill == True:
+                        print(COLOR, " select opponenets piece to be removed")
+                        if COLOR == BLACK and location_num in white_placed:
+                            pygame.draw.circle(screen, IZZY_RED, (x,y), 30)
+                            pygame.draw.circle(screen, WHITE, (x, y), 20)
+                            taken_spots.remove([x,y])
+                            white_placed.remove(location_num)
+                            mill = False
+                        elif COLOR == WHITE and location_num in black_placed:
+                            pygame.draw.circle(screen, IZZY_RED, (x,y), 30)
+                            pygame.draw.circle(screen, BLACK, (x, y), 20)
+                            taken_spots.remove([x,y])
+                            black_placed.remove(location_num)
+                            mill = False
+                        else:
+                            pass
 
-                    if turn == 19:
-                        phase = 2
-                        print("PHASE 2 - SELECT a piece to move")
+                    elif phase == 2:
 
-                    if phase == 2:
+                        if turn % 2 == 0:                                
+                            COLOR = BLACK
+                        else:
+                            COLOR = WHITE
 
                         if selected != 123:
 
@@ -121,30 +132,29 @@ class Game(object):
                             pygame.draw.circle(screen, YELLOW, sel, 30)
                             pygame.draw.circle(screen, COLOR, (x, y), 20)
 
-
                             move_to = location_num
 
                             print("selected", selected)
                             print("MOVE TO", move_to)
 
-                            if (move_to not in taken_spots and move_to != [0,0]): 
-                                #Board.isAdj(location_num, move_to) and
+                            if ([x,y] not in taken_spots and [x,y] != [0,0] and Board.isAdj(self,selected, move_to) == True):
                                 print("are we even getting to this part")
 
                                 if COLOR == BLACK:
                                     pygame.draw.circle(screen, BLACK, (x, y), 20)
                                     print("Black",location_num)
                                     black_placed.remove(selected)
-                                    Board.isMill(self, black_placed, move_to)
+                                    mill = Board.isMill(self, black_placed, move_to)
 
                                 else:
                                     pygame.draw.circle(screen, WHITE, (x, y), 20)
                                     print("White", location_num)
                                     white_placed.remove(selected)
-                                    Board.isMill(self, white_placed, move_to)
+                                    mill = Board.isMill(self, white_placed, move_to)
 
                                 turn = turn + 1
                                 taken_spots.append([x,y])
+                                taken_spots.remove(sel)
                                 print("black spots:", black_placed)
                                 print("white spots:", white_placed)
                                 selected = 123
@@ -153,12 +163,12 @@ class Game(object):
 
                         else:
                            if location_num in black_placed or location_num in white_placed:
-                                #pygame.draw.circle(screen, YELLOW, (x, y), 30)
-                                #pygame.draw.circle(screen, COLOR, (x, y), 20)
                                 selected = location_num
+                           else:
+                                continue
                         
-
-                    if phase == 1:
+                    # Phase 1 - placing 9 pieces each
+                    else:
                     #do nothing if spot is not available
                         if [x, y] in taken_spots:
                             print ("----> Position not Empty <----")
@@ -202,14 +212,14 @@ class Game(object):
                                         black_to_move = instructions_font.render("Player B: Waiting for White Piece...", True, (YELLOW))
                                         screen.blit(black_to_move, [200,50])   
                                         pygame.draw.circle(screen, BLACK, (x+5, y-3), 2)
-                                        Board.isMill(self, black_placed, location_num)
+                                        mill = Board.isMill(self, black_placed, location_num)
                                         #black_placed.append(location_num)
                                     else:
                                         white_count += 1
                                         white_to_move = instructions_font.render("Player A: Waiting for Black Piece...", True, (YELLOW))
                                         screen.blit(white_to_move, [200,50])
                                         pygame.draw.circle(screen, WHITE, (x+2, y-3), 2)
-                                        Board.isMill(self, white_placed, location_num)
+                                        mill = Board.isMill(self, white_placed, location_num)
                                         #white_placed.append(location_num)
 
                                     #my isMill function automatically updates the black/white_placed lists..? im not sure why .____.
@@ -304,6 +314,14 @@ class Board(object):
         #print(spots_Dict)
         #Looks like {0: [100, 100], 1: [100, 400], 2: [100, 700], 3:[200,200]...}
         return spots_Dict
+
+    def redraw_pieces(self, black, white, spots_Dict):
+        for i in black:
+            [x,y] = Board.numToCords(self, i, spots_Dict)
+            pygame.draw.circle(screen, BLACK, (x, y), 20)
+        for i in white:
+            [x,y] = Board.numToCords(self, i, spots_Dict)
+            pygame.draw.circle(screen, WHITE, (x, y), 20)
     
     def Piece_Location(self, x, y, spots_Dict):
         xy_range = 25
