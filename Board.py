@@ -1,150 +1,340 @@
-
 import pygame
+import os
+import sys
+from pygame.locals import *
 
-WIDTH = 800
-HEIGHT = 800
+from Globals import *
+import GameLogic
 
-
-#not needed right now..?
-#ROWS, COLS = 6, 6
-#SQR_SIZE = WIDTH//COLS
-#COLOR = (255,50,5)
-
-#most arent in use. i think that "brown" is actually blue
-WHITE = (255,255,255)
-# BLUE = (200,0,2)
-GREY = (180,180,180)
-GREEN = (0,255,0)
-YELLOW = (255,255,0)
-RED = (0,0,0)
-
-
-
-FPS = 60
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-WIN.fill(GREY)
-pygame.display.set_caption("Nine Men's Morris")
-
-#-----------------------------------------------------------!
-def piece_creation(cordi_list, cordi_pos):
-    for x,y in cordi_pos:
-        if x or y in cordi_list:
-            pygame.draw.circle(WIN, GREEN, (x,y), 20)
-            
+class Board:
+    def __init__(self, screen):
+        self.screen = screen 
+    
+        self.turn = 1
+        self.phase1 = True
+        self.phase2 = False
+        self.phase3White = False
+        self.phase3Black = False
+        self.removingPiece = False
+        self.waiting = True
+        self.winner = ""
+        self.instructions = "Player WHITE: Place your Piece"
+        self.clicked = False
+        self.stored = -1
+        self.takenSpots = []
+        self.blackPlaced = []
+        self.whitePlaced = []
+        self.boardLeft = int(WIDTH * 0.1)
+        self.boardRight = int(WIDTH * 0.9)
+        self.middleHorz = int((self.boardRight - self.boardLeft) / 2) + self.boardLeft
+        self.boardTop = int(HEIGHT * 0.1)
+        self.boardBottom = int(HEIGHT * 0.9)
+        self.middleVert = int((self.boardBottom - self.boardTop) / 2) + self.boardTop
+        self.midSqLeft = self.middleHorz - int((0.66 *(self.boardRight - self.boardLeft)) / 2)
+        self.midSqTop = self.middleVert - int((0.66 *(self.boardBottom - self.boardTop)) / 2)
+        self.midSqRight = self.middleHorz + int((0.66 *(self.boardRight - self.boardLeft)) / 2)
+        self.midSqBottom = self.middleVert + int((0.66 *(self.boardBottom - self.boardTop)) / 2)
+        self.innerSqLeft = self.middleHorz - int((0.33 *(self.boardRight - self.boardLeft)) / 2)
+        self.innerSqTop = self.middleVert - int((0.33 *(self.boardBottom - self.boardTop)) / 2)
+        self.innerSqRight = self.middleHorz + int((0.33 *(self.boardRight - self.boardLeft)) / 2)
+        self.innerSqBottom = self.middleVert + int((0.33 *(self.boardBottom - self.boardTop)) / 2)
+        self.axisLeft = int(WIDTH * 0.05)
+        self.axisBottom = int(HEIGHT * 0.95)
+        self.boardCoords = [(self.boardLeft, self.boardTop), #0
+                       (self.boardLeft, self.middleVert), #1
+                       (self.boardLeft, self.boardBottom), #2
+                       (self.midSqLeft, self.midSqTop), #3
+                       (self.midSqLeft, self.middleVert), #4
+                       (self.midSqLeft, self.midSqBottom), #5
+                       (self.innerSqLeft, self.innerSqTop), #6
+                       (self.innerSqLeft, self.middleVert), #7
+                       (self.innerSqLeft, self.innerSqBottom), #8
+                       (self.middleHorz, self.boardTop), #9
+                       (self.middleHorz, self.midSqTop), #10
+                       (self.middleHorz, self.innerSqTop), #11
+                       (self.middleHorz, self.innerSqBottom), #12
+                       (self.middleHorz, self.midSqBottom), #13
+                       (self.middleHorz, self.boardBottom), #14
+                       (self.innerSqRight, self.innerSqTop), #15
+                       (self.innerSqRight, self.middleVert), #16
+                       (self.innerSqRight, self.innerSqBottom), #17
+                       (self.midSqRight, self.midSqTop), #18
+                       (self.midSqRight, self.middleVert), #19
+                       (self.midSqRight, self.midSqBottom), #20
+                       (self.boardRight, self.boardTop), #21
+                       (self.boardRight, self.middleVert), #22
+                       (self.boardRight, self.boardBottom)] #23
         
-            #This is where I had enough and had to go to sleep...
+        # Setup Font
+        #-------------------------------------------------
+        self.wordFont = pygame.font.SysFont(None, 50)
 
-        #-----------------------------------------------------------!
-        #Remember to tell Elizabeth to expand list for additional tuples to pick from when 
+    def drawBoard(self):
+        self.screen.fill(GRAY)
+        
+        instructionsRender = self.wordFont.render(self.instructions, True, YELLOW)
+        instructionsSize = self.wordFont.size(self.instructions)
+        instructionsPos = (int(WIDTH * 0.5) - int(instructionsSize[0] / 2),
+                           int(HEIGHT * 0.05) - int(instructionsSize[1] / 2))
+        self.screen.blit(instructionsRender, instructionsPos)
 
+        pygame.draw.rect(self.screen, DUSTY_YELLOW,
+                         (self.boardLeft, self.boardTop,
+                          self.boardRight - self.boardLeft,
+                          self.boardBottom - self.boardTop))
+
+        #coordinates for placing board markers
+        textAdj = 12
+        axis = {"7": [self.axisLeft, self.boardTop - textAdj], 
+                "6":[self.axisLeft, self.midSqTop - textAdj], 
+                "5":[self.axisLeft, self.innerSqTop - textAdj], 
+                "4":[self.axisLeft, self.middleVert - textAdj], 
+                "3":[self.axisLeft, self.innerSqBottom - textAdj], 
+                "2":[self.axisLeft, self.midSqBottom - textAdj], 
+                "1":[self.axisLeft, self.boardBottom - textAdj], 
+                "a":[self.boardLeft - textAdj, self.axisBottom], 
+                "b":[self.midSqLeft - textAdj, self.axisBottom], 
+                "c":[self.innerSqLeft - textAdj, self.axisBottom], 
+                "d":[self.middleHorz - textAdj, self.axisBottom], 
+                "e":[self.innerSqRight - textAdj, self.axisBottom], 
+                "f":[self.midSqRight - textAdj, self.axisBottom], 
+                "g":[self.boardRight - textAdj, self.axisBottom],}
+
+        for items in axis:
+            text = self.wordFont.render(items, True, (YELLOW))
+            self.screen.blit(text, axis[items])
+
+        for idx in range(0, len(self.boardCoords)):
+            pygame.draw.circle(self.screen, BLACK,
+                (self.boardCoords[idx][0], self.boardCoords[idx][1]), 5)
+
+        pieceSize = 15
+
+        if self.clicked:
+            pygame.draw.circle(self.screen, YELLOW,
+                (self.boardCoords[self.stored][0], self.boardCoords[self.stored][1]), pieceSize+3)
+
+        for piece in self.blackPlaced:
+            pygame.draw.circle(self.screen, BLACK,
+                (self.boardCoords[piece][0], self.boardCoords[piece][1]), pieceSize)
+
+        for piece in self.whitePlaced:
+            pygame.draw.circle(self.screen, WHITE,
+                (self.boardCoords[piece][0], self.boardCoords[piece][1]), pieceSize - 1)
+            pygame.draw.circle(self.screen, BLACK,
+                (self.boardCoords[piece][0], self.boardCoords[piece][1]), pieceSize, 1)
+
+
+        lineWidth = 3
+        pygame.draw.line(self.screen, BLACK, (self.boardLeft, self.boardTop),
+                         (self.boardLeft, self.boardBottom), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.boardLeft, self.boardTop),
+                         (self.boardRight, self.boardTop), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.boardLeft, self.boardBottom),
+                         (self.boardRight, self.boardBottom), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.boardRight, self.boardTop),
+                         (self.boardRight, self.boardBottom), lineWidth)
+
+        pygame.draw.line(self.screen, BLACK, (self.midSqLeft, self.midSqTop),
+                         (self.midSqLeft, self.midSqBottom), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.midSqLeft, self.midSqTop),
+                         (self.midSqRight, self.midSqTop), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.midSqLeft, self.midSqBottom),
+                         (self.midSqRight, self.midSqBottom), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.midSqRight, self.midSqTop),
+                         (self.midSqRight, self.midSqBottom), lineWidth)
+
+        pygame.draw.line(self.screen, BLACK, (self.innerSqLeft, self.innerSqTop),
+                         (self.innerSqLeft, self.innerSqBottom), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.innerSqLeft, self.innerSqTop),
+                         (self.innerSqRight, self.innerSqTop), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.innerSqLeft, self.innerSqBottom),
+                         (self.innerSqRight, self.innerSqBottom), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.innerSqRight, self.innerSqTop),
+                         (self.innerSqRight, self.innerSqBottom), lineWidth)
+
+        pygame.draw.line(self.screen, BLACK, (self.boardLeft, self.middleVert),
+                         (self.innerSqLeft, self.middleVert), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.innerSqRight, self.middleVert),
+                         (self.boardRight, self.middleVert), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.middleHorz, self.boardTop),
+                         (self.middleHorz, self.innerSqTop), lineWidth)
+        pygame.draw.line(self.screen, BLACK, (self.middleHorz, self.innerSqBottom),
+                         (self.middleHorz, self.boardBottom), lineWidth)
+
+        pygame.display.update()
+  
+    def handleMouseClick(self, s, t):
+        pieceLocation = self.convertCoordinatesNUM(s, t)
+        if self.removingPiece:
+            if self.turnCheck() == "WHITE":
+                if self.isBlackPiece(pieceLocation):
+                    self.blackPlaced.remove(pieceLocation)
+                    self.takenSpots.remove(pieceLocation)
+                    if self.phase2 and len(self.blackPlaced) == 3:
+                        self.phase3Black = True
+                    self.instructionText()
+                    self.turn = self.turn + 1
+                    self.waiting = True
+                    self.removingPiece = False
+            elif self.turnCheck() == "BLACK":
+                if self.isWhitePiece(pieceLocation):
+                    self.whitePlaced.remove(pieceLocation)
+                    self.takenSpots.remove(pieceLocation)
+                    if self.phase2 and len(self.whitePlaced) == 3:
+                        self.phase3White = True
+                    self.instructionText()
+                    self.turn = self.turn + 1
+                    self.waiting = True
+                    self.removingPiece = False
+        elif self.phase1:
+            if self.isNotTaken(pieceLocation):
+                self.instructionText()
+                self.phaseOne(pieceLocation)
+        elif  self.turnCheck() == "BLACK" and self.phase3Black:
+            if self.clicked == False:
+            	self.clickOne(pieceLocation)
+            else:
+            	if self.isNotTaken(pieceLocation):
+                    self.instructionText()
+                    self.clickTwo(pieceLocation)
+        elif  self.turnCheck() == "WHITE" and self.phase3White:
+            if self.clicked == False:
+                self.clickOne(pieceLocation)
+            else:
+            	if self.isNotTaken(pieceLocation):
+                    self.instructionText()
+                    self.clickTwo(pieceLocation)
+        elif self.phase2:
+            if self.clicked == False:
+                self.clickOne(pieceLocation)
+            else:
+                if self.isNotTaken(pieceLocation) and GameLogic.isAdj(self.stored ,pieceLocation):
+                    self.instructionText()
+                    self.clickTwo(pieceLocation)
+
+                
+        if self.removingPiece:
+            if self.waiting:
+                self.turn = self.turn - 1
+                self.waiting = False
+            self.instructions = ("Player " + self.turnCheck() + ": Remove a Piece")
+        
+        self.drawBoard() 
+        return self.hasWon()
+
+      
+    def hasWon(self):
+        if self.phase1 == False:
+            if len(self.whitePlaced) == 2:
+                self.winner = "BLACK"
+                return True
+            elif len(self.blackPlaced) == 2:
+                self.winner = "WHITE"
+                return True
+        return False
+    
+    def turnCheck(self):
+        if self.turn % 2 == 0:                                
+            return "BLACK"
+        else:
+            return "WHITE"
+  
+    def instructionText(self):
+        if self.turnCheck() == "WHITE" and self.phase3Black:
+            self.instructions = ("Player BLACK: Move your Piece (Flying Phase)")
+        elif self.turnCheck() == "BLACK" and self.phase3White:
+            self.instructions = ("Player WHITE: Move your Piece (Flying Phase)")
+        elif self.turnCheck() == "WHITE" and self.phase2:
+            self.instructions = ("Player BLACK: Move your Piece")
+        elif self.turnCheck() == "BLACK" and self.phase2:
+            self.instructions = ("Player WHITE: Move your Piece")
+        elif self.turnCheck() == "WHITE" and self.phase1:
+            self.instructions = ("Player BLACK: Place your Piece")
+        elif self.turnCheck() == "BLACK" and self.phase1:
+            self.instructions = ("Player WHITE: Place your Piece")
+      
+    def convertCoordinatesNUM(self, s, t):
+        locationNum = GameLogic.cordsToNum(s, t, self.boardCoords) 
+        return locationNum
+    
+    def isNotTaken(self, num):
+        if num in self.takenSpots:
+            return False
+        return True
+  
+    def isBlackPiece(self, num):
+        if num in self.blackPlaced:
+            return True
+        return False
+  
+    def isWhitePiece(self, num):
+        if num in self.whitePlaced:
+            return True
+        return False
+    
+    def phaseOne(self, location):
+        if self.turnCheck() == "BLACK":                             
+            self.blackPlaced.append(location)
+            self.drawBoard()
+            if GameLogic.isMill(self.blackPlaced, location):
+                self.removingPiece = True
+        else:
+            self.whitePlaced.append(location)
+            self.drawBoard()
+            if GameLogic.isMill(self.whitePlaced, location):
+                self.removingPiece = True
                     
+        self.turn = self.turn + 1
+        if self.turn == 19:
+            self.phase1 = False
+            self.phase2 = True
+            self.instructions = ("Player WHITE: Move your Piece")
+        self.takenSpots.append(location)
     
-def main():
-    run = True
-    clock = pygame.time.Clock()
-    cordi_set = [(100, 100), (100, 400), (100, 700),
-                     (200, 200), (200, 400), (200, 600),
-                     (400, 100), (400, 200), (400, 300),
-                     (300, 300), (300, 400), (300, 500),
-                     (400, 500), (400, 500), (400, 700),
-                     (500, 300), (500, 400), (500, 500),
-                     (600, 200), (600, 300), (600, 500),
-                     (700, 100), (700, 400), (700, 700)]
+    def clickOne(self, pieceLocation):
+        if self.turnCheck() == "BLACK":
+            if self.isBlackPiece(pieceLocation):
+                self.stored = pieceLocation
+                self.clicked = True
+        else:
+            if self.isWhitePiece(pieceLocation):
+                self.stored = pieceLocation
+                self.clicked = True
     
-    while run:
-        clock.tick(FPS)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            if event.type == pygame.MOUSEBUTTONDOWN: #"""DO CHECK HERE WHEN YOU GET THE CHANCE"""
-                mouse_pos = pygame.mouse.get_pos()
-                s, t = mouse_pos
-                if s and t in cordi_set: 
-                    pass           
-                    #pygame.draw.circle(WIN, GREEN, (s, t), 20)
-                pygame.draw.circle(WIN, RED, (s, t), 27)
-                pygame.draw.circle(WIN, YELLOW, (s, t), 25)
-
-
-        lens = [600,400,200]
-        xy = [100,200,300]
-        spots = []
-        
-
-        #-----------------------------------------------------------!
-        # mouse_pos = pygame.mouse.get_pos()
-        # mouse_click = pygame.mouse.get_pressed()
-        # #print (mouse_pos)
-        # s, t = mouse_pos
-        # if mouse_click == True:
-        #     print (s, t)
-            
-        #     #piece_creation(cordi_set, mouse_pos)
-        #     pygame.draw.circle(WIN, GREEN, (s, t), 20)
-
-        i = 0
-        while i < 3:
-            x = xy[i]
-            y = lens[i]
-
-            pygame.draw.circle(WIN, RED, (x,x), 10)
-            pygame.draw.circle(WIN, GREEN, (x,x), 10)
-            spots.append([x,x])
-
-            pygame.draw.circle(WIN, RED, (y+x,y+x), 10)
-            spots.append([y+x,y+x])
-
-            pygame.draw.circle(WIN, RED, (y+x,x), 10)
-            spots.append([y+x,x])
-
-            pygame.draw.circle(WIN, RED, (x,y+x), 10)
-            spots.append([x,y+x])
-
-            pygame.draw.circle(WIN, RED, (x, 400), 10)
-            spots.append([x, 400])
-
-            pygame.draw.circle(WIN, RED, (y+x, 400), 10)
-            spots.append([y+x, 400])
-
-            pygame.draw.circle(WIN, RED, (400, x), 10)
-            spots.append([400, x])
-
-            pygame.draw.circle(WIN, RED, (400, x+y), 10)
-            spots.append([400, x+y])
-
-
-            pygame.draw.line(WIN, RED, (x,x), (x,y+x), 5)
-            pygame.draw.line(WIN, RED, (y+x,x), (y+x,y+x), 5)
-            pygame.draw.line(WIN, RED, (x,x), (y+x,x), 5)
-            pygame.draw.line(WIN, RED, (x,y+x), (y+x,y+x), 5)
-
-            i=i+1
-        
-        #draws the short lines
-        pygame.draw.line(WIN, RED, (xy[0],400), (xy[2],400), 5) #a4 - c4
-        pygame.draw.line(WIN, RED, (xy[0]+lens[0],400), (xy[2]+lens[2],400), 5) #e4 - g4
-        pygame.draw.line(WIN, RED, (400,xy[0]), (400,xy[2]), 5) #d7 - d5
-        pygame.draw.line(WIN, RED, (400,xy[0]+lens[0]), (400,xy[2]+lens[2]), 5) #d3-d1
-
-       
-        
-        pygame.display.flip()
+    def clickTwo(self, pieceLocation):
+        if self.turnCheck() == "BLACK":
+            self.blackPlaced.append(pieceLocation)
+            self.blackPlaced.remove(self.stored)
+            self.takenSpots.append(pieceLocation)
+            self.takenSpots.remove(self.stored)
+            self.turn = self.turn + 1
+            self.clicked = False
+            if GameLogic.isMill(self.blackPlaced, pieceLocation):
+                self.removingPiece = True
+        else:
+            self.whitePlaced.append(pieceLocation)
+            self.whitePlaced.remove(self.stored)
+            self.takenSpots.append(pieceLocation)
+            self.takenSpots.remove(self.stored)
+            self.turn = self.turn + 1
+            self.clicked = False
+            if GameLogic.isMill(self.whitePlaced, pieceLocation):
+                self.removingPiece = True
     
-    #shows the X Y locations of each spot    
-    print(spots)
-    print(len(spots))
-
-    #confirmed theres no duplicates, we could delete this
-    res = []
-    for i in spots: 
-        if i not in res: 
-            res.append(i) 
-
-    print(res)
-    print(len(spots))
-
-    #so I guess we want to translate this to something like [spot number : spot location] ? whatcha think??
-
-    pygame.quit()
-
-main()
+    def clearBoard(self):
+        self.turn = 1
+        self.phase1 = True
+        self.phase2 = False
+        self.phase3White = False
+        self.phase3Black = False
+        self.removingPiece = False
+        self.waiting = True
+        self.winner = ""
+        self.instructions = "Player WHITE: Place your Piece"
+        self.clicked = False
+        self.stored = -1
+        self.takenSpots = []
+        self.blackPlaced = []
+        self.whitePlaced = []
+        self.drawBoard()
