@@ -11,6 +11,7 @@ class Board:
         self.screen = screen 
     
         self.turn = 1
+        self.currentTurn = "WHITE"
         self.phase1 = True
         self.phase2 = False
         self.phase3White = False
@@ -166,8 +167,9 @@ class Board:
   
     def handleMouseClick(self, s, t):
         pieceLocation = self.convertCoordinatesNUM(s, t)
+        self.currentTurn = self.turnCheck()
         if self.removingPiece:
-            if self.turnCheck() == "WHITE":
+            if self.currentTurn == "WHITE":
                 if self.isBlackPiece(pieceLocation):
                     self.blackPlaced.remove(pieceLocation)
                     self.takenSpots.remove(pieceLocation)
@@ -177,7 +179,7 @@ class Board:
                     self.turn = self.turn + 1
                     self.waiting = True
                     self.removingPiece = False
-            elif self.turnCheck() == "BLACK":
+            elif self.currentTurn == "BLACK":
                 if self.isWhitePiece(pieceLocation):
                     self.whitePlaced.remove(pieceLocation)
                     self.takenSpots.remove(pieceLocation)
@@ -191,22 +193,31 @@ class Board:
             if self.isNotTaken(pieceLocation):
                 self.instructionText()
                 self.phaseOne(pieceLocation)
-        elif  self.turnCheck() == "BLACK" and self.phase3Black:
-            if self.clicked == False:
+        elif  self.currentTurn == "BLACK" and self.phase3Black:
+            if self.convertCoordinatesNUM(s, t) == self.stored:
+                self.stored = -1
+                self.clicked = False
+            elif self.clicked == False:
             	self.clickOne(pieceLocation)
             else:
             	if self.isNotTaken(pieceLocation):
                     self.instructionText()
                     self.clickTwo(pieceLocation)
-        elif  self.turnCheck() == "WHITE" and self.phase3White:
-            if self.clicked == False:
+        elif  self.currentTurn == "WHITE" and self.phase3White:
+            if self.convertCoordinatesNUM(s, t) == self.stored:
+                self.stored = -1
+                self.clicked = False
+            elif self.clicked == False:
                 self.clickOne(pieceLocation)
             else:
             	if self.isNotTaken(pieceLocation):
                     self.instructionText()
                     self.clickTwo(pieceLocation)
         elif self.phase2:
-            if self.clicked == False:
+            if self.convertCoordinatesNUM(s, t) == self.stored:
+                self.stored = -1
+                self.clicked = False
+            elif self.clicked == False:
                 self.clickOne(pieceLocation)
             else:
                 if self.isNotTaken(pieceLocation) and GameLogic.isAdj(self.stored ,pieceLocation):
@@ -241,17 +252,17 @@ class Board:
             return "WHITE"
   
     def instructionText(self):
-        if self.turnCheck() == "WHITE" and self.phase3Black:
+        if self.currentTurn == "WHITE" and self.phase3Black:
             self.instructions = ("Player BLACK: Move your Piece (Flying Phase)")
-        elif self.turnCheck() == "BLACK" and self.phase3White:
+        elif self.currentTurn == "BLACK" and self.phase3White:
             self.instructions = ("Player WHITE: Move your Piece (Flying Phase)")
-        elif self.turnCheck() == "WHITE" and self.phase2:
+        elif self.currentTurn == "WHITE" and self.phase2:
             self.instructions = ("Player BLACK: Move your Piece")
-        elif self.turnCheck() == "BLACK" and self.phase2:
+        elif self.currentTurn == "BLACK" and self.phase2:
             self.instructions = ("Player WHITE: Move your Piece")
-        elif self.turnCheck() == "WHITE" and self.phase1:
+        elif self.currentTurn == "WHITE" and self.phase1:
             self.instructions = ("Player BLACK: Place your Piece")
-        elif self.turnCheck() == "BLACK" and self.phase1:
+        elif self.currentTurn == "BLACK" and self.phase1:
             self.instructions = ("Player WHITE: Place your Piece")
       
     def convertCoordinatesNUM(self, s, t):
@@ -274,7 +285,7 @@ class Board:
         return False
     
     def phaseOne(self, location):
-        if self.turnCheck() == "BLACK":                             
+        if self.currentTurn == "BLACK":                             
             self.blackPlaced.append(location)
             self.drawBoard()
             if GameLogic.isMill(self.blackPlaced, location):
@@ -293,7 +304,7 @@ class Board:
         self.takenSpots.append(location)
     
     def clickOne(self, pieceLocation):
-        if self.turnCheck() == "BLACK":
+        if self.currentTurn == "BLACK":
             if self.isBlackPiece(pieceLocation):
                 self.stored = pieceLocation
                 self.clicked = True
@@ -303,11 +314,12 @@ class Board:
                 self.clicked = True
     
     def clickTwo(self, pieceLocation):
-        if self.turnCheck() == "BLACK":
+        if self.currentTurn == "BLACK":
             self.blackPlaced.append(pieceLocation)
             self.blackPlaced.remove(self.stored)
             self.takenSpots.append(pieceLocation)
             self.takenSpots.remove(self.stored)
+            self.stored = -1
             self.turn = self.turn + 1
             self.clicked = False
             if GameLogic.isMill(self.blackPlaced, pieceLocation):
@@ -317,6 +329,7 @@ class Board:
             self.whitePlaced.remove(self.stored)
             self.takenSpots.append(pieceLocation)
             self.takenSpots.remove(self.stored)
+            self.stored = -1
             self.turn = self.turn + 1
             self.clicked = False
             if GameLogic.isMill(self.whitePlaced, pieceLocation):
@@ -324,6 +337,7 @@ class Board:
     
     def clearBoard(self):
         self.turn = 1
+        self.currentTurn = "WHITE"
         self.phase1 = True
         self.phase2 = False
         self.phase3White = False
