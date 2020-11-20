@@ -1,5 +1,10 @@
 import pygame
-from Main.py import *
+import sys
+
+sys.path.insert(1, '/path/to/Nine-Men-s-Morris') 
+
+import Main.py
+
 
 def CheckTurnTest (turn, color):
    for i in range(101):
