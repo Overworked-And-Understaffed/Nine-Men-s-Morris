@@ -17,3 +17,6 @@ class CheckMillTest(unittest.TestCase):
                                 self.assertFalse(isMill([firstPiece,secondPiece],thirdPiece))
                                 print("False")
         print("End")
+
+if __name__ == '__main__': 
+    unittest.main() 
