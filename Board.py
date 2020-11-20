@@ -193,6 +193,8 @@ class Board:
             if self.isNotTaken(pieceLocation):
                 self.instructionText()
                 self.phaseOne(pieceLocation)
+                #print("Phase 1 in progress, Valid piece placed.")
+            #print("Phase 1 in progress, Invalid piece not placed.")
         elif  self.currentTurn == "BLACK" and self.phase3Black:
             if self.convertCoordinatesNUM(s, t) == self.stored:
                 self.stored = -1
@@ -203,6 +205,8 @@ class Board:
             	if self.isNotTaken(pieceLocation):
                     self.instructionText()
                     self.clickTwo(pieceLocation)
+                    #print("Phase 3 in progress, Valid black piece placed.")
+                #print("Phase 3 in progress, Invalid black piece not placed.")
         elif  self.currentTurn == "WHITE" and self.phase3White:
             if self.convertCoordinatesNUM(s, t) == self.stored:
                 self.stored = -1
@@ -213,6 +217,8 @@ class Board:
             	if self.isNotTaken(pieceLocation):
                     self.instructionText()
                     self.clickTwo(pieceLocation)
+                    #print("Phase 3 in progress, Valid white piece placed.")
+                #print("Phase 3 in progress, Invalid white piece not placed.")
         elif self.phase2:
             if self.convertCoordinatesNUM(s, t) == self.stored:
                 self.stored = -1
@@ -223,6 +229,8 @@ class Board:
                 if self.isNotTaken(pieceLocation) and GameLogic.isAdj(self.stored ,pieceLocation):
                     self.instructionText()
                     self.clickTwo(pieceLocation)
+                    #print("Phase 2 in progress, Valid piece placed.")
+                #print("Phase 2 in progress, Invalid piece not placed.")
 
                 
         if self.removingPiece:
