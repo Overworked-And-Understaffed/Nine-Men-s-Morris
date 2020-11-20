@@ -3,7 +3,7 @@ import unittest
 from Main.py import *
 
 class CheckTurnTest(unittest.TestCase):
-    def CheckTurnTest (self, turn, color):
+    def CheckTurnTest (self, turn, COLOR):
         for player_turn in range(101):
                 if (turn % 2 == 0):
                     # assert Player = Player A
