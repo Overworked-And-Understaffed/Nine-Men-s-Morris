@@ -93,11 +93,15 @@ class Menu:
             headingSize = self.largeFont.size("WHITE Player Wins!")
             headingPos = (int(WIDTH * 0.5) - int(headingSize[0] / 2), int(HEIGHT * 0.2) - int(headingSize[1] / 2))
             screen.blit(heading, headingPos)
+            #Manual Test 13.1
+            #print("White Win Menu printed")
         if self.winner == "BLACK":
             heading = self.largeFont.render("BLACK Player Wins!", True, YELLOW)
             headingSize = self.largeFont.size("BLACK Player Wins!")
             headingPos = (int(WIDTH * 0.5) - int(headingSize[0] / 2), int(HEIGHT * 0.2) - int(headingSize[1] / 2))
             screen.blit(heading, headingPos)
+            #Manual Test 13.2
+            #print("White Win Menu printed")
 
         self.replayTxt = self.menuFont.render("Play Again", True, YELLOW)
         self.closeTxt = self.menuFont.render("Close", True, YELLOW)
@@ -158,18 +162,26 @@ class Menu:
       elif self.isEndScreen:
           if self.replayRect.collidepoint(mousePosition):
             self.isEndScreen = False
+            #Manual Test 7.1
+            #print(“Button has been pressed. Restart Game.”)
           elif self.closeRect.collidepoint(mousePosition):
+            #Manual Test 6.1
+            #print(“Button has been pressed. Close Program.”)
             pygame.quit()
             sys.exit()
       else:
           if self.pvpRect.collidepoint(mousePosition):
             self.isMenu = False
+            #Manual Test 5.1
+            #print(“Button has been pressed. Start Game.”)
             self.board.drawBoard()
           elif self.pveRect.collidepoint(mousePosition):
             self.isMenu = False
             self.board.drawBoard()
           elif self.insRect.collidepoint(mousePosition):
             self.isInstructions = True
+            #Manual Test 5.2
+            #print("Button has been pressed. Instructions Menu Printed.")
           elif self.exitRect.collidepoint(mousePosition):
             pygame.quit()
             sys.exit()
