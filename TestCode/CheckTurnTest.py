@@ -1,17 +1,14 @@
-import pygame
-import sys
+import unittest
 
-sys.path.insert(1, '/path/to/Nine-Men-s-Morris') 
+from Main.py import *
 
-import Main.py
-
-
-def CheckTurnTest (turn, color):
-   for i in range(101):
-        if (turn % 2 == 0):
-            # assert Player = Player A
-            assert COLOR == BLACK #Color here is a local vaiable, same with turn
-        else:
-            # assert Player = Player B
-            assert COLOR == WHITE
-        
+class CheckTurnTest(unittest.TestCase):
+    def CheckTurnTest (self, turn, color):
+        for player_turn in range(101):
+                if (turn % 2 == 0):
+                    # assert Player = Player A
+                    self.assert COLOR == BLACK #Color here is a local vaiable, same with turn
+                else:
+                    # assert Player = Player B
+                    self.assert COLOR == WHITE
+                
