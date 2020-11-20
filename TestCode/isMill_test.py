@@ -15,15 +15,6 @@ class CheckMillTest(unittest.TestCase):
                                 assert isMill([firstPiece,secondPiece,thirdPiece],thirdPiece) == True 
                                 print("True")
                             else:
-<<<<<<< Updated upstream:isMill_test.py
-                                self.assertFalse(isMill([firstPiece,secondPiece],thirdPiece))
-                                print("False")
-        print("End")
-
-if __name__ == '__main__': 
-    unittest.main() 
-=======
                                 assert isMill([firstPiece,secondPiece],thirdPiece) == False
                                 print(sorted({firstPiece,secondPiece,thirdPiece}))
         print("End")
->>>>>>> Stashed changes:TestCode/isMill_test.py
