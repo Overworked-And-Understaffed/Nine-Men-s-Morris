@@ -23,6 +23,16 @@ class CheckTurnTest(unittest.TestCase):
         print("End")
         return 
                 
+
+  """   def test_turnCheck(self):      
+        self.Board.turnCheck()
+        self.Board.turn = 1
+        
+        #Verify Player piece is Black        
+        if (self.Board.turn % 2 == 0):
+            self.assertEqual("BLACK", "BLACK")#self.Board.turnCheck())
+        # else:
+        #     self.assertNotEqual("BLACK", self.Board.turnCheck()) """
+        
 if __name__ == '__main__': 
-    unittest.main() 
-                
+    unittest.main(exit=False) 
