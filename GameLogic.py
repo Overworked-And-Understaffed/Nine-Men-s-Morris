@@ -3,13 +3,13 @@ import os
 import sys
 from pygame.locals import *
   
-'''def Piece_Location(x, y, spots_Dict):
+'''def PieceLocation(x, y, spots_Dict):
         
-        xy_range = 25
+        xyRange = 25
         # Range set to 25, could be changed, seems good
         
-        for i in spots_Dict.values():
-            if (i[0] > x - xy_range and i[0] < x + xy_range and i[1] > y - xy_range and i[1] < y + xy_range):
+        for i in spotsDict.values():
+            if (i[0] > x - xyRange and i[0] < x + xyRange and i[1] > y - xyRange and i[1] < y + xyRange):
                 print(x, y, i[0], i[1])
                 print("YEAH BOI") #Love it
                 return [i[0],i[1]]
@@ -17,25 +17,25 @@ from pygame.locals import *
             return [0,0]'''
           
 def cordsToNum(x, y, spots_List):       
-    xy_range = 25
+    xyRange = 25
     # Range set to 25, could be changed, seems good
     
     for i in range(0, len(spots_List)):
-        if (spots_List[i][0] > x - xy_range and spots_List[i][0] < x + xy_range
-            and spots_List[i][1] > y - xy_range and spots_List[i][1] < y + xy_range):
+        if (spotsList[i][0] > x - xyRange and spotsList[i][0] < x + xyRange
+            and spotsList[i][1] > y - xyRange and spotsList[i][1] < y + xyRange):
             return i
         
     return -1
 
-'''def numToCords(num, spots_Dict):
+'''def numToCords(num, spotsDict):
         
-    for key, value in spots_Dict.items():
+    for key, value in spotsDict.items():
         if (key == num):
             return value'''
 
-def isMill(placed_pieces, new_piece):
+def isMill(placedPieces, newPiece):
 
-    mill_list = [[{0,1,2}, {0,9,21}], #0
+    millsList = [[{0,1,2}, {0,9,21}], #0
                  [{0,1,2}, {1,4,7}], #1
                  [{0,1,2}, {2,14,23}], #2
                  [{3,4,5}, {3,10,18}], #3
@@ -60,14 +60,14 @@ def isMill(placed_pieces, new_piece):
                  [{21,22,23}, {16,19,22}], #22
                  [{21,22,23}, {2,14,23}]] #23
 
-    for mill in mill_list[new_piece]:
-        if mill.issubset(placed_pieces):
+    for mill in millsList[newPiece]:
+        if mill.issubset(placedPieces):
             return True
 
     return False
 
-def isAdj(current_spot, potential_spot):
-    adjacent_positions = [{1,9},#0
+def isAdj(currentSpot, potentialSpot):
+    adjacentPositions = [{1,9},#0
                           {0,4,2},#1
                           {1,14},#2
                           {10,4},#3
@@ -92,7 +92,7 @@ def isAdj(current_spot, potential_spot):
                           {21,19,23},#22
                           {22,14}]#23
 
-    if potential_spot in adjacent_positions[current_spot]:
+    if potentialSpot in adjacentPositions[currentSpot]:
         return True
     else:
         return False               
