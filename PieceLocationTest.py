@@ -9,16 +9,16 @@ from Globals import *
 from GameLogic import cordsToNum
 
 class PieceLocationTest(unittest.TestCase):
-    def test_Piece_Location_Test(self):
+    def testPieceLocationTest(self):
         pygame.init()
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         board = Board.Board(screen)
-        xy_range = 25
+        xyRange = 25
 
         for x in range(800):
             for y in range(800):
                 for i in board.boardCoords:
-                    if i[0] > x - xy_range and i[0] < x + xy_range and i[1] > y - xy_range and i[1] < y + xy_range :
+                    if i[0] > x - xyRange and i[0] < x + xyRange and i[1] > y - xyRange and i[1] < y + xyRange :
                         assert self.Piece_Location(x, y, board.boardCoords)# == True, ("Issue at", x, y)
                     else:
                         assert self.Piece_Location(x, y, board.boardCoords)# == False, ("Issue at", x, y)
