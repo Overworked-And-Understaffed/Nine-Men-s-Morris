@@ -12,9 +12,9 @@ class CheckTurnTest(unittest.TestCase):
         pygame.init()
         screen = pygame.display.set_mode((WIDTH, HEIGHT))
         board = Board.Board(screen)
-        for player_turn in range(101):
-            board.turn = player_turn
-            if (player_turn % 2 == 0):
+        for playerTurn in range(101):
+            board.turn = playerTurn
+            if (playerTurn % 2 == 0):
                 # assert Player = Player A
                 self.assertEqual(board.turnCheck(),"BLACK")
             else:
@@ -24,7 +24,7 @@ class CheckTurnTest(unittest.TestCase):
         return 
                 
 
-  """   def test_turnCheck(self):      
+  """   def testTurnCheck(self):      
         self.Board.turnCheck()
         self.Board.turn = 1
         
