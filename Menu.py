@@ -177,6 +177,7 @@ class Menu:
             self.board.drawBoard()
           elif self.pveRect.collidepoint(mousePosition):
             self.isMenu = False
+            #PLAYER VS COMPUTER VARIABLE GOES HERE
             self.board.drawBoard()
           elif self.insRect.collidepoint(mousePosition):
             self.isInstructions = True

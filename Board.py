@@ -168,6 +168,7 @@ class Board:
     def handleMouseClick(self, s, t):
         pieceLocation = self.convertCoordinatesNUM(s, t)
         self.currentTurn = self.turnCheck()
+        
         if self.removingPiece:
             if self.currentTurn == "WHITE":
                 if self.isBlackPiece(pieceLocation):
@@ -240,6 +241,9 @@ class Board:
             self.instructions = ("Player " + self.turnCheck() + ": Remove a Piece")
         
         self.drawBoard() 
+
+        #COMPUTER IF STATEMENT GOES HERE 
+
         return self.hasWon()
 
       

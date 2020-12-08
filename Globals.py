@@ -3,7 +3,7 @@
 WIDTH = 800
 HEIGHT = 800
 
-# Setup FPS
+# Setup Frames Per Second
 #-------------------------------------------------
 FPS = 10
 
