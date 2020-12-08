@@ -4,8 +4,8 @@ from unittest.case import TestCase
 from Board import *
 
 class CheckTurnTest(unittest.TestCase):
-    # def test_turncheck (self, turn, COLOR):
-    #     for player_turn in range(18):
+    # def testTurncheck (self, turn, COLOR):
+    #     for playerTurn in range(18):
     #             if (turn % 2 == 0):
     #                 # assert Player = Player A
     #                 self.assertEqual(COLOR, BLACK) #COLOR here is a local vaiable, same with turn
@@ -14,7 +14,7 @@ class CheckTurnTest(unittest.TestCase):
     #                 self.assertEqual(COLOR, WHITE)
 
 
-    def test_turnCheck(self):      
+    def testTurnCheck(self):      
         self.Board.turnCheck()
         self.Board.turn = 1
         
