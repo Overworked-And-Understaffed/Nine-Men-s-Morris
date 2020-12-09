@@ -11,7 +11,7 @@ import AIHeuristic
 class Board:
     def __init__(self, screen):
         self.screen = screen 
-        
+    
         #self.mode
         self.turn = 1
         self.currentTurn = "WHITE"
@@ -180,15 +180,6 @@ class Board:
         pieceLocation = self.convertCoordinatesNUM(s, t)
 
         self.currentTurn = self.turnCheck()
-        
-        if self.mode == "AI" and self.currentTurn == "BLACK":
-            if self.phase1:
-                pieceLocation = AIHeuristic.AIPhase1(self.takenSpots, self.whitePlaced, self.blackPlaced)
-            elif self.phase2:
-                self.stored, pieceLocation = AIHeuristic.AIphase2(self.takenSpots, self.whitePlaced, self.blackPlaced)
-            else:
-                self.stored, pieceLocation = AIHeuristic.AIFlying(self.takenSpots, self.whitePlaced, self.blackPlaced)
-
 
         if self.removingPiece:
             if self.currentTurn == "WHITE":
@@ -202,8 +193,6 @@ class Board:
                     self.waiting = True
                     self.removingPiece = False
             elif self.currentTurn == "BLACK":
-                if self.mode == "AI":
-                    pieceLocation = AIHeuristic.removal(self.whitePlaced, self.blackPlaced)
                 if self.isWhitePiece(pieceLocation):
                     self.whitePlaced.remove(pieceLocation)
                     self.takenSpots.remove(pieceLocation)
@@ -220,25 +209,13 @@ class Board:
                 #print("Phase 1 in progress, Valid piece placed.")
             #print("Phase 1 in progress, Invalid piece not placed.")
         elif  self.currentTurn == "BLACK" and self.phase3Black:
-            if self.mode == "AI":
-                self.blackPlaced.append(pieceLocation)
-                self.blackPlaced.remove(self.stored)
-                self.takenSpots.append(pieceLocation)
-                self.takenSpots.remove(self.stored)
-                self.stored = -1
-                self.turn = self.turn + 1
-                self.clicked = False
-                if GameLogic.isMill(self.blackPlaced, pieceLocation):
-                    self.removingPiece = True
-            
-            else:
                 if self.convertCoordinatesNUM(s, t) == self.stored:
                     self.stored = -1
                     self.clicked = False
                 elif self.clicked == False:
-            	    self.clickOne(pieceLocation)
+                    self.clickOne(pieceLocation)
                 else:
-            	    if self.isNotTaken(pieceLocation):
+                    if self.isNotTaken(pieceLocation):
                         self.instructionText()
                         self.clickTwo(pieceLocation)
                         #print("Phase 3 in progress, Valid black piece placed.")
@@ -256,29 +233,17 @@ class Board:
                     #print("Phase 3 in progress, Valid white piece placed.")
                 #print("Phase 3 in progress, Invalid white piece not placed.")
         elif self.phase2:
-            if self.mode == "AI" and self.currentTurn == "BLACK":
-                self.blackPlaced.append(pieceLocation)
-                self.blackPlaced.remove(self.stored)
-                self.takenSpots.append(pieceLocation)
-                self.takenSpots.remove(self.stored)
+            if self.convertCoordinatesNUM(s, t) == self.stored:
                 self.stored = -1
-                self.turn = self.turn + 1
                 self.clicked = False
-                if GameLogic.isMill(self.blackPlaced, pieceLocation):
-                    self.removingPiece = True
-
+            elif self.clicked == False:
+                self.clickOne(pieceLocation)
             else:
-                if self.convertCoordinatesNUM(s, t) == self.stored:
-                    self.stored = -1
-                    self.clicked = False
-                elif self.clicked == False:
-                    self.clickOne(pieceLocation)
-                else:
-                    if self.isNotTaken(pieceLocation) and GameLogic.isAdj(self.stored ,pieceLocation):
-                        self.instructionText()
-                        self.clickTwo(pieceLocation)
-                        #print("Phase 2 in progress, Valid piece placed.")
-                    #print("Phase 2 in progress, Invalid piece not placed.")
+                if self.isNotTaken(pieceLocation) and GameLogic.isAdj(self.stored ,pieceLocation):
+                    self.instructionText()
+                    self.clickTwo(pieceLocation)
+                    #print("Phase 2 in progress, Valid piece placed.")
+                #print("Phase 2 in progress, Invalid piece not placed.")
 
                 
         if self.removingPiece:
@@ -289,7 +254,46 @@ class Board:
         
         self.drawBoard() 
 
-        #COMPUTER IF STATEMENT GOES HERE 
+        if self.mode == "AI" and self.turn% 2 == 0:
+            if self.phase1:
+                pieceLocation = AIHeuristic.AIPhase1(self.takenSpots, self.whitePlaced, self.blackPlaced)
+                self.instructionText()
+                self.phaseOne(pieceLocation)
+            elif self.phase2:
+                self.stored, pieceLocation = AIHeuristic.AIphase2(self.takenSpots, self.whitePlaced, self.blackPlaced)
+                self.blackPlaced.append(pieceLocation)
+                self.blackPlaced.remove(self.stored)
+                self.takenSpots.append(pieceLocation)
+                self.takenSpots.remove(self.stored)
+                self.stored = -1
+                self.instructionText()
+                self.turn = self.turn + 1
+                self.clicked = False
+                if GameLogic.isMill(self.blackPlaced, pieceLocation):
+                    self.removingPiece = True
+            elif self.phase3Black:
+                self.stored, pieceLocation = AIHeuristic.AIFlying(self.takenSpots, self.whitePlaced, self.blackPlaced)
+                self.blackPlaced.append(pieceLocation)
+                self.blackPlaced.remove(self.stored)
+                self.takenSpots.append(pieceLocation)
+                self.takenSpots.remove(self.stored)
+                self.stored = -1
+                self.instructionText()
+                self.turn = self.turn + 1
+                self.clicked = False
+                if GameLogic.isMill(self.blackPlaced, pieceLocation):
+                    self.removingPiece = True
+            
+            if self.removingPiece:
+                pieceLocation = AIHeuristic.removal(self.whitePlaced, self.blackPlaced)
+                self.whitePlaced.remove(pieceLocation)
+                self.takenSpots.remove(pieceLocation)
+                if self.phase2 and len(self.whitePlaced) == 3:
+                    self.phase3White = True
+                self.removingPiece = False
+
+            
+            self.drawBoard()
 
         return self.hasWon()
 
@@ -305,23 +309,23 @@ class Board:
         return False
     
     def turnCheck(self):
-        if self.turn % 2 == 0:                                
+        if self.turn % 2 == 0:
             return "BLACK"
         else:
             return "WHITE"
   
     def instructionText(self):
-        if self.currentTurn == "WHITE" and self.phase3Black:
+        if self.turn % 2 != 0 and self.phase3Black:
             self.instructions = ("Player BLACK: Move your Piece (Flying Phase)")
-        elif self.currentTurn == "BLACK" and self.phase3White:
+        elif self.turn % 2 == 0 and self.phase3White:
             self.instructions = ("Player WHITE: Move your Piece (Flying Phase)")
-        elif self.currentTurn == "WHITE" and self.phase2:
+        elif self.turn % 2 != 0 and self.phase2:
             self.instructions = ("Player BLACK: Move your Piece")
-        elif self.currentTurn == "BLACK" and self.phase2:
+        elif self.turn % 2 == 0 and self.phase2:
             self.instructions = ("Player WHITE: Move your Piece")
-        elif self.currentTurn == "WHITE" and self.phase1:
+        elif self.turn % 2 != 0 and self.phase1:
             self.instructions = ("Player BLACK: Place your Piece")
-        elif self.currentTurn == "BLACK" and self.phase1:
+        elif self.turn % 2 == 0 and self.phase1:
             self.instructions = ("Player WHITE: Place your Piece")
       
     def convertCoordinatesNUM(self, s, t):
@@ -344,7 +348,7 @@ class Board:
         return False
     
     def phaseOne(self, location):
-        if self.currentTurn == "BLACK":                             
+        if self.currentTurn == "BLACK" or self.turn % 2 == 0:
             self.blackPlaced.append(location)
             self.drawBoard()
             if GameLogic.isMill(self.blackPlaced, location):
