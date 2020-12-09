@@ -259,18 +259,6 @@ class Board:
                 pieceLocation = AIHeuristic.AIPhase1(self.takenSpots, self.whitePlaced, self.blackPlaced)
                 self.instructionText()
                 self.phaseOne(pieceLocation)
-            elif self.phase2:
-                self.stored, pieceLocation = AIHeuristic.AIphase2(self.takenSpots, self.whitePlaced, self.blackPlaced)
-                self.blackPlaced.append(pieceLocation)
-                self.blackPlaced.remove(self.stored)
-                self.takenSpots.append(pieceLocation)
-                self.takenSpots.remove(self.stored)
-                self.stored = -1
-                self.instructionText()
-                self.turn = self.turn + 1
-                self.clicked = False
-                if GameLogic.isMill(self.blackPlaced, pieceLocation):
-                    self.removingPiece = True
             elif self.phase3Black:
                 self.stored, pieceLocation = AIHeuristic.AIFlying(self.takenSpots, self.whitePlaced, self.blackPlaced)
                 self.blackPlaced.append(pieceLocation)
@@ -283,6 +271,19 @@ class Board:
                 self.clicked = False
                 if GameLogic.isMill(self.blackPlaced, pieceLocation):
                     self.removingPiece = True
+            elif self.phase2:
+                self.stored, pieceLocation = AIHeuristic.AIphase2(self.takenSpots, self.whitePlaced, self.blackPlaced)
+                self.blackPlaced.append(pieceLocation)
+                self.blackPlaced.remove(self.stored)
+                self.takenSpots.append(pieceLocation)
+                self.takenSpots.remove(self.stored)
+                self.stored = -1
+                self.instructionText()
+                self.turn = self.turn + 1
+                self.clicked = False
+                if GameLogic.isMill(self.blackPlaced, pieceLocation):
+                    self.removingPiece = True
+
             
             if self.removingPiece:
                 pieceLocation = AIHeuristic.removal(self.whitePlaced, self.blackPlaced)
@@ -290,8 +291,10 @@ class Board:
                 self.takenSpots.remove(pieceLocation)
                 if self.phase2 and len(self.whitePlaced) == 3:
                     self.phase3White = True
+                    self.turn = self.turn - 1
+                    self.instructionText()
+                    self.turn = self.turn + 1
                 self.removingPiece = False
-
             
             self.drawBoard()
 

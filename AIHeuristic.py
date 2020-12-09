@@ -181,7 +181,7 @@ def AIPhase1(takenSpots, whitePlaced, blackPlaced):
     if len(moveOptions) != 0:
         return pickByRandom(moveOptions)
 
-def AIFlying(takenSpots, whitePlace, blackPlaced):
+def AIFlying(takenSpots, whitePlaced, blackPlaced):
      openSpots = getOpenSpots(takenSpots)
 
      moveFrom = pickByRandom(blackPlaced)
