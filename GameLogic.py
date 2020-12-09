@@ -17,12 +17,12 @@ from pygame.locals import *
             return [0,0]'''
           
 def cordsToNum(x, y, spots_List):       
-    xyRange = 25
+    xy_range = 25
     # Range set to 25, could be changed, seems good
     
     for i in range(0, len(spots_List)):
-        if (spotsList[i][0] > x - xyRange and spotsList[i][0] < x + xyRange
-            and spotsList[i][1] > y - xyRange and spotsList[i][1] < y + xyRange):
+        if (spots_List[i][0] > x - xy_range and spots_List[i][0] < x + xy_range
+            and spots_List[i][1] > y - xy_range and spots_List[i][1] < y + xy_range):
             return i
         
     return -1

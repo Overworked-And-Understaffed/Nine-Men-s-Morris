@@ -4,8 +4,13 @@ import Board
 import pygame, sys
 from pygame.locals import *
 
+global mode
+
 class Menu:
     def __init__(self, board):
+
+      #self.mode
+
       self.isMenu = True
       self.isInstructions = False
       self.isEndScreen = False
@@ -174,11 +179,13 @@ class Menu:
             self.isMenu = False
             #Manual Test 5.1
             #print(“Button has been pressed. Start Game.”)
-            self.board.drawBoard()
+            #self.board.setMode("PVP")
+            self.board.startGame("PVP")
           elif self.pveRect.collidepoint(mousePosition):
             self.isMenu = False
             #PLAYER VS COMPUTER VARIABLE GOES HERE
-            self.board.drawBoard()
+            #self.board.setMode("AI")
+            self.board.startGame("AI")
           elif self.insRect.collidepoint(mousePosition):
             self.isInstructions = True
             #Manual Test 5.2
