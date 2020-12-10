@@ -104,6 +104,14 @@ class ComputerTest(unittest.TestCase):
         self.blackPlaced.append(self.pieceLocation)
         self.blackPlaced.remove(self.stored)
         assert self.blackPlaced != [6,8,17]
+    #If it is Phase 1 and the first piece is being placed, it will be placed at random
+    def testPlaceRandomFirstPiece(self):
+        self.takenSpots = [6]
+        self.whitePlaced = [6]
+        self.blackPlaced = []
+        self.pieceLocation = AIHeuristic.AIPhase1(self.takenSpots, self.whitePlaced, self.blackPlaced)
+        self.blackPlaced.append(self.pieceLocation)
+        assert len(self.blackPlaced) == 1
 
 if __name__ == '__main__': 
     unittest.main() 
