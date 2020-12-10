@@ -183,9 +183,10 @@ class Menu:
             self.board.startGame("PVP")
           elif self.pveRect.collidepoint(mousePosition):
             self.isMenu = False
-            #PLAYER VS COMPUTER VARIABLE GOES HERE
             #self.board.setMode("AI")
             self.board.startGame("AI")
+            #Manual Test 14.1
+            #print(“Button has been pressed. Start Game against AI.”)
           elif self.insRect.collidepoint(mousePosition):
             self.isInstructions = True
             #Manual Test 5.2
